@@ -32,7 +32,7 @@ export default function Footer() {
         <div className="flex flex-col">
 
           <div className="mb-5 flex items-center gap-5">
-
+Get-PSDrive C
             <a
               href="https://www.tiktok.com/@meltedmindzrecords"
               target="_blank"
@@ -41,7 +41,6 @@ export default function Footer() {
             >
               <FaTiktok size={20} />
             </a>
-
 
             <a
               href="https://www.instagram.com/meltedmindzrecords"
@@ -52,7 +51,6 @@ export default function Footer() {
               <FaInstagram size={20} />
             </a>
 
-
             <a
               href="https://x.com/mindzlabel"
               target="_blank"
@@ -61,7 +59,6 @@ export default function Footer() {
             >
               <FaXTwitter size={20} />
             </a>
-
 
             <a
               href="https://www.youtube.com/@meltedmindzrecords"
@@ -72,7 +69,6 @@ export default function Footer() {
               <FaYoutube size={20} />
             </a>
 
-
             <a
               href="https://open.spotify.com/"
               target="_blank"
@@ -81,7 +77,6 @@ export default function Footer() {
             >
               <FaSpotify size={20} />
             </a>
-
 
             <a
               href="https://soundcloud.com/"
@@ -93,7 +88,6 @@ export default function Footer() {
             </a>
 
           </div>
-
 
 
           <h3 className="mb-3 text-base font-semibold">
@@ -122,7 +116,6 @@ export default function Footer() {
                 "
               />
 
-
               <button
                 type="submit"
                 className="
@@ -141,7 +134,6 @@ export default function Footer() {
             </div>
 
 
-
             <div className="mb-3 flex items-start">
 
               <input
@@ -149,7 +141,6 @@ export default function Footer() {
                 id="marketing"
                 className="mr-2 mt-1"
               />
-
 
               <label
                 htmlFor="marketing"
@@ -161,7 +152,6 @@ export default function Footer() {
               </label>
 
             </div>
-
 
 
             <p className="text-xs leading-relaxed text-zinc-500">
@@ -180,27 +170,30 @@ export default function Footer() {
 
             </p>
 
-
           </form>
-
 
         </div>
 
 
 
-
-
-        {/* CAREERS */}
+        {/* COMPANY */}
 
         <div className="flex flex-col items-center text-center">
 
-
           <h3 className="mb-3 text-base font-semibold">
-            Join Our Team
+            Company
           </h3>
 
 
-          <div className="flex items-center gap-3 text-sm text-zinc-400">
+          <div className="flex flex-col gap-3 text-sm text-zinc-400">
+
+            <Link
+              href="/news"
+              className="hover:text-white"
+            >
+              Press
+            </Link>
+
 
             <Link
               href="/careers"
@@ -210,9 +203,6 @@ export default function Footer() {
             </Link>
 
 
-            <span>|</span>
-
-
             <Link
               href="/internships"
               className="hover:text-white"
@@ -220,12 +210,17 @@ export default function Footer() {
               Internships
             </Link>
 
+
+            <Link
+              href="/contact"
+              className="hover:text-white"
+            >
+              Contact
+            </Link>
+
           </div>
 
-
         </div>
-
-
 
 
 
@@ -233,16 +228,20 @@ export default function Footer() {
 
         <div className="flex flex-col items-end text-xs text-zinc-400">
 
-
-          <div className="mb-3 flex flex-wrap items-center justify-end gap-3">
-
-            <span>
-              © 2026 Melted Mindz Records
-            </span>
+          <span className="mb-4">
+            © 2026 Melted Mindz Records
+          </span>
 
 
-            <span>|</span>
-
+          <div
+            className="
+              flex
+              flex-col
+              items-end
+              gap-3
+              text-right
+            "
+          >
 
             <Link
               href="/legal/privacy-policy"
@@ -250,9 +249,6 @@ export default function Footer() {
             >
               Privacy Policy
             </Link>
-
-
-            <span>|</span>
 
 
             <Link
@@ -263,18 +259,12 @@ export default function Footer() {
             </Link>
 
 
-            <span>|</span>
-
-
             <Link
               href="/legal/cookie-policy"
               className="hover:text-white"
             >
               Cookie Policy
             </Link>
-
-
-            <span>|</span>
 
 
             <Link
@@ -285,67 +275,12 @@ export default function Footer() {
             </Link>
 
 
-            <span>|</span>
-
-
             <Link
               href="/legal/accessibility"
               className="hover:text-white"
             >
               Accessibility
             </Link>
-
-
-            <span>|</span>
-
-
-            <Link
-              href="/press"
-              className="hover:text-white"
-            >
-              Press
-            </Link>
-
-          </div>
-
-
-
-
-
-          <div className="flex flex-wrap items-center justify-end gap-3">
-
-
-            <Link
-              href="/careers"
-              className="hover:text-white"
-            >
-              Careers
-            </Link>
-
-
-            <span>|</span>
-
-
-            <Link
-              href="/internships"
-              className="hover:text-white"
-            >
-              Internships
-            </Link>
-
-
-            <span>|</span>
-
-
-            <Link
-              href="/contact"
-              className="hover:text-white"
-            >
-              Contact
-            </Link>
-
-
-            <span>|</span>
 
 
             <Link
@@ -355,9 +290,7 @@ export default function Footer() {
               Do Not Sell or Share My Personal Information
             </Link>
 
-
           </div>
-
 
         </div>
 
