@@ -1,11 +1,14 @@
 export default function Navbar() {
   return (
     <nav className="flex items-center justify-between border-b border-zinc-800 bg-black px-6 py-5 text-white">
+
       <h1 className="text-xl font-bold">
         Melted Mindz Records
       </h1>
 
+
       <div className="flex gap-6 text-sm">
+
         <a href="/" className="hover:text-zinc-400">
           Home
         </a>
@@ -30,10 +33,19 @@ export default function Navbar() {
           Contact
         </a>
 
-        <a href="/signed" className="hover:text-zinc-400">
+
+        <a
+          href="https://meltedmindzrecords.zite.so"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-zinc-400"
+        >
           Get Signed
         </a>
+
+
       </div>
+
     </nav>
   );
 }

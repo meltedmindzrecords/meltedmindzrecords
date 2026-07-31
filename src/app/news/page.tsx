@@ -1,33 +1,55 @@
-import Image from "next/image";
 import Link from "next/link";
 
-const newsArticles = [
+const pressReleases = [
   {
-    title: "Melted Mindz Records Announces New Release 'Still With Me' by Lil Rappy",
-    date: "July 28, 2026",
-    category: "Release News",
-    image: "/news/still-with-me.jpg",
-    slug: "still-with-me-release",
+    title:
+      "The Next Chapter of Melted Mindz Records: Welcoming Lil Rappy",
+    date: "Mar 29, 2026",
+    category: "Press Release",
     description:
-      "Lil Rappy delivers an emotional new release through Melted Mindz Records featuring melodic storytelling and personal experiences.",
+      "Melted Mindz Records announces the next chapter of the label with the welcoming of Lil Rappy, highlighting the artist's journey and the continued growth of the Melted Mindz Records roster.",
+    link:
+      "https://meltedmindzrecords.substack.com/p/the-next-chapter-of-melted-mindz",
   },
+
   {
-    title: "Melted Mindz Records Continues Building The Next Generation Of Artists",
-    date: "July 2026",
-    category: "Label News",
-    image: "/news/label-update.jpg",
-    slug: "label-update",
+    title: "The Sonic Architect: Welcoming Lucius",
+    date: "Mar 29, 2026",
+    category: "Press Release",
     description:
-      "Melted Mindz Records continues expanding its roster and developing independent artists.",
+      "Melted Mindz Records welcomes Lucius and introduces a new creative force to the label family.",
+    link:
+      "https://meltedmindzrecords.substack.com/p/the-sonic-architect-welcoming-lucius",
   },
+
   {
-    title: "Behind The Mindz: The Creative Process",
-    date: "Coming Soon",
-    category: "Behind The Scenes",
-    image: "/news/behind-the-scenes.jpg",
-    slug: "behind-the-mindz",
+    title: "The Pulse of the Streets: Welcoming Yxng Dreezy",
+    date: "Mar 29, 2026",
+    category: "Press Release",
     description:
-      "A look inside the creativity, collaboration, and vision behind Melted Mindz Records.",
+      "Melted Mindz Records welcomes Yxng Dreezy and introduces his sound, vision, and creative journey as part of the next generation of artists.",
+    link:
+      "https://meltedmindzrecords.substack.com/p/the-pulse-of-the-streets-welcoming",
+  },
+
+  {
+    title: "From The Swamp To The World: Okay Boomhauer",
+    date: "Jul 8, 2026",
+    category: "Press Release",
+    description:
+      "Melted Mindz Records highlights Okay Boomhauer and the creative vision behind the artist.",
+    link:
+      "https://open.substack.com/pub/meltedmindzrecords/p/from-the-swamp-to-the-world-okay",
+  },
+
+  {
+    title: "In The Grip Of The Undead: GutZombie",
+    date: "Jul 8, 2026",
+    category: "Press Release",
+    description:
+      "Melted Mindz Records showcases GutZombie and their unique artistic identity.",
+    link:
+      "https://open.substack.com/pub/meltedmindzrecords/p/in-the-grip-of-the-undead-gutzombie",
   },
 ];
 
@@ -35,7 +57,6 @@ const newsArticles = [
 export default function NewsPage() {
   return (
     <main className="min-h-screen bg-black text-white">
-
 
       {/* HERO */}
 
@@ -47,14 +68,12 @@ export default function NewsPage() {
             Melted Mindz Records
           </p>
 
-
           <h1 className="mt-6 text-6xl font-black sm:text-8xl">
             News
           </h1>
 
-
           <p className="mx-auto mt-6 max-w-3xl text-lg text-zinc-400">
-            Latest releases, artist announcements, label updates,
+            Official press releases, label announcements, artist updates,
             and stories from Melted Mindz Records.
           </p>
 
@@ -65,63 +84,56 @@ export default function NewsPage() {
 
 
 
-      {/* FEATURED NEWS */}
 
+      {/* FEATURED PRESS RELEASE */}
 
       <section className="mx-auto max-w-7xl px-6 py-24">
 
-
         <h2 className="text-5xl font-black">
-          Featured News
+          Featured Press Release
         </h2>
 
 
-        <div className="mt-12 grid gap-12 lg:grid-cols-2">
+        <div className="mt-12 rounded-3xl border border-zinc-800 bg-zinc-950 p-10">
 
 
-          <div className="relative aspect-video overflow-hidden rounded-3xl border border-zinc-800">
-
-            <Image
-              src="/news/still-with-me.jpg"
-              alt="Still With Me Release"
-              fill
-              className="object-cover"
-            />
-
-          </div>
+          <p className="uppercase tracking-widest text-red-500">
+            {pressReleases[0].category}
+          </p>
 
 
-
-          <div className="flex flex-col justify-center">
-
-
-            <p className="uppercase tracking-widest text-red-500">
-              Release News
-            </p>
+          <h3 className="mt-5 text-4xl font-bold">
+            {pressReleases[0].title}
+          </h3>
 
 
-            <h3 className="mt-4 text-4xl font-bold">
-              Still With Me by Lil Rappy
-            </h3>
+          <p className="mt-4 text-zinc-500">
+            {pressReleases[0].date}
+          </p>
 
 
-            <p className="mt-6 text-zinc-400 leading-8">
-              Melted Mindz Records presents "Still With Me" by Lil Rappy,
-              an emotional release showcasing melodic storytelling and
-              personal growth.
-            </p>
+          <p className="mt-6 max-w-3xl leading-8 text-zinc-400">
+            {pressReleases[0].description}
+          </p>
 
 
-
-            <Link
-              href="/releases/still-with-me"
-              className="mt-8 inline-flex w-fit rounded-full bg-red-600 px-8 py-3 font-bold"
-            >
-              View Release
-            </Link>
-
-
-          </div>
+          <a
+            href={pressReleases[0].link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="
+              mt-8
+              inline-flex
+              rounded-full
+              bg-red-600
+              px-8
+              py-3
+              font-bold
+              hover:bg-red-500
+            "
+          >
+            Read Press Release
+          </a>
 
 
         </div>
@@ -133,85 +145,89 @@ export default function NewsPage() {
 
 
 
-      {/* NEWS GRID */}
-
+      {/* PRESS ARCHIVE */}
 
       <section className="bg-zinc-950 px-6 py-24">
 
-
         <div className="mx-auto max-w-7xl">
 
-
           <h2 className="text-5xl font-black">
-            Latest Updates
+            Press Archive
           </h2>
 
+
+          <p className="mt-4 text-zinc-400">
+            Explore official Melted Mindz Records announcements and press releases.
+          </p>
 
 
           <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 
 
-            {newsArticles.map((article) => (
+            {pressReleases.map((release) => (
 
-              <Link
-                key={article.slug}
-                href={`/news/${article.slug}`}
-                className="overflow-hidden rounded-3xl border border-zinc-800 bg-black transition hover:border-red-600"
+              <article
+                key={release.title}
+                className="
+                  rounded-3xl
+                  border
+                  border-zinc-800
+                  bg-black
+                  p-8
+                  transition
+                  hover:border-red-600
+                "
               >
 
-
-                <div className="relative aspect-video">
-
-
-                  <Image
-                    src={article.image}
-                    alt={article.title}
-                    fill
-                    className="object-cover"
-                  />
+                <p className="text-sm uppercase tracking-widest text-red-500">
+                  {release.category}
+                </p>
 
 
-                </div>
+                <h3 className="mt-4 text-2xl font-bold">
+                  {release.title}
+                </h3>
 
 
+                <p className="mt-3 text-sm text-zinc-500">
+                  {release.date}
+                </p>
 
 
-                <div className="p-6">
+                <p className="mt-5 leading-7 text-zinc-400">
+                  {release.description}
+                </p>
 
 
-                  <p className="text-sm uppercase tracking-widest text-red-500">
-                    {article.category}
-                  </p>
+                <a
+                  href={release.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="
+                    mt-6
+                    inline-block
+                    rounded-full
+                    border
+                    border-white
+                    px-6
+                    py-2
+                    font-semibold
+                    hover:bg-white
+                    hover:text-black
+                  "
+                >
+                  Read Release →
+                </a>
 
 
-                  <h3 className="mt-4 text-2xl font-bold">
-                    {article.title}
-                  </h3>
-
-
-                  <p className="mt-3 text-sm text-zinc-500">
-                    {article.date}
-                  </p>
-
-
-                  <p className="mt-4 text-zinc-400">
-                    {article.description}
-                  </p>
-
-
-                </div>
-
-
-              </Link>
+              </article>
 
             ))}
 
 
           </div>
 
-
         </div>
-
 
       </section>
 
@@ -219,11 +235,9 @@ export default function NewsPage() {
 
 
 
-      {/* NEWSLETTER */}
-
+      {/* SUBSCRIBE */}
 
       <section className="px-6 py-24 text-center">
-
 
         <h2 className="text-5xl font-black">
           Stay Connected
@@ -231,17 +245,28 @@ export default function NewsPage() {
 
 
         <p className="mx-auto mt-6 max-w-2xl text-zinc-400">
-          Subscribe for new releases, artist announcements,
-          merchandise drops, and exclusive updates.
+          Subscribe to Melted Mindz Records for official announcements,
+          artist news, and exclusive updates.
         </p>
 
 
-
-        <button
-          className="mt-10 rounded-full bg-red-600 px-10 py-4 font-bold"
+        <a
+          href="https://meltedmindzrecords.substack.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="
+            mt-10
+            inline-block
+            rounded-full
+            bg-red-600
+            px-10
+            py-4
+            font-bold
+            hover:bg-red-500
+          "
         >
-          Join Newsletter
-        </button>
+          Subscribe To Press
+        </a>
 
 
       </section>
