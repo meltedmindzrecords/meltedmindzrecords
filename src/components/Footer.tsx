@@ -31,7 +31,6 @@ export default function Footer() {
 
         <div className="flex flex-col">
 
-
           <div className="mb-5 flex items-center gap-5">
 
             <a
@@ -170,7 +169,7 @@ export default function Footer() {
               Please read our{" "}
 
               <Link
-                href="/privacy-policy"
+                href="/legal/privacy-policy"
                 className="underline hover:text-white"
               >
                 Privacy Policy
@@ -246,7 +245,7 @@ export default function Footer() {
 
 
             <Link
-              href="/privacy-policy"
+              href="/legal/privacy-policy"
               className="hover:text-white"
             >
               Privacy Policy
@@ -257,7 +256,7 @@ export default function Footer() {
 
 
             <Link
-              href="/terms"
+              href="/legal/terms-of-use"
               className="hover:text-white"
             >
               Terms of Use
@@ -268,10 +267,32 @@ export default function Footer() {
 
 
             <Link
-              href="/cookie-policy"
+              href="/legal/cookie-policy"
               className="hover:text-white"
             >
               Cookie Policy
+            </Link>
+
+
+            <span>|</span>
+
+
+            <Link
+              href="/legal/dmca"
+              className="hover:text-white"
+            >
+              DMCA Policy
+            </Link>
+
+
+            <span>|</span>
+
+
+            <Link
+              href="/legal/accessibility"
+              className="hover:text-white"
+            >
+              Accessibility
             </Link>
 
 
@@ -290,13 +311,26 @@ export default function Footer() {
 
 
 
+
           <div className="flex flex-wrap items-center justify-end gap-3">
+
 
             <Link
               href="/careers"
               className="hover:text-white"
             >
               Careers
+            </Link>
+
+
+            <span>|</span>
+
+
+            <Link
+              href="/internships"
+              className="hover:text-white"
+            >
+              Internships
             </Link>
 
 
@@ -315,7 +349,7 @@ export default function Footer() {
 
 
             <Link
-              href="/do-not-sell"
+              href="/legal/do-not-sell"
               className="hover:text-white"
             >
               Do Not Sell or Share My Personal Information
