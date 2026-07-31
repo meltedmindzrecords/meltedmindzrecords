@@ -14,28 +14,24 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Desktop Hover Reveal Zone */}
+      {/* Desktop Hover Reveal Area */}
       <div
-        className="fixed left-0 right-0 top-0 z-[60] hidden h-5 lg:block"
+        className="fixed left-0 right-0 top-0 z-[60] hidden h-6 lg:block"
         onMouseEnter={() => setShowNavbar(true)}
       />
 
-
-      {/* Main Navbar */}
+      {/* Navbar */}
       <nav
+        onMouseEnter={() => setShowNavbar(true)}
         onMouseLeave={() => setShowNavbar(false)}
-        className={`fixed left-0 right-0 top-0 z-50 border-b border-zinc-800 bg-black/95 backdrop-blur-xl transition-transform duration-300 ${
-          showNavbar
-            ? "translate-y-0"
-            : "-translate-y-full lg:block"
+        className={`fixed left-0 right-0 top-0 z-50 border-b border-zinc-800 bg-black transition-transform duration-300 ${
+          showNavbar ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
 
-
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" aria-label="Melted Mindz Records Home">
             <Image
               src="/logo/Melted.Mindz.Records-Logo.jpg"
               alt="Melted Mindz Records"
@@ -47,70 +43,38 @@ export default function Navbar() {
           </Link>
 
 
-
           {/* Desktop Navigation */}
-          <div className="hidden items-center gap-8 text-sm font-medium lg:flex">
+          <div className="hidden items-center gap-8 text-sm font-medium text-white lg:flex">
 
-            <Link
-              href="/"
-              className="transition hover:text-zinc-400"
-            >
+            <Link className="transition hover:text-zinc-300" href="/">
               Home
             </Link>
 
-
-            <Link
-              href="/artists"
-              className="transition hover:text-zinc-400"
-            >
+            <Link className="transition hover:text-zinc-300" href="/artists">
               Artists
             </Link>
 
-
-            <Link
-              href="/releases"
-              className="transition hover:text-zinc-400"
-            >
+            <Link className="transition hover:text-zinc-300" href="/releases">
               Releases
             </Link>
 
-
-            <Link
-              href="/news"
-              className="transition hover:text-zinc-400"
-            >
+            <Link className="transition hover:text-zinc-300" href="/news">
               News
             </Link>
 
-
-            <Link
-              href="/about"
-              className="transition hover:text-zinc-400"
-            >
+            <Link className="transition hover:text-zinc-300" href="/about">
               About
             </Link>
 
-
-            <Link
-              href="/careers"
-              className="transition hover:text-zinc-400"
-            >
+            <Link className="transition hover:text-zinc-300" href="/careers">
               Careers
             </Link>
 
-
-            <Link
-              href="/internships"
-              className="transition hover:text-zinc-400"
-            >
+            <Link className="transition hover:text-zinc-300" href="/internships">
               Internships
             </Link>
 
-
-            <Link
-              href="/contact"
-              className="transition hover:text-zinc-400"
-            >
+            <Link className="transition hover:text-zinc-300" href="/contact">
               Contact
             </Link>
 
@@ -128,41 +92,35 @@ export default function Navbar() {
 
 
 
-          {/* Mobile Hamburger */}
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="lg:hidden"
-            aria-label="Open menu"
+            className="rounded-md p-2 text-white transition hover:bg-zinc-900 lg:hidden"
+            aria-label="Open navigation menu"
           >
-
             <svg
-              className="h-8 w-8 text-white"
+              className="h-8 w-8"
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
               viewBox="0 0 24 24"
             >
-
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 d="M4 6h16M4 12h16M4 18h16"
               />
-
             </svg>
-
           </button>
 
         </div>
-
       </nav>
-
 
 
 
       {/* Mobile Overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black/70 transition-opacity duration-300 lg:hidden ${
+        className={`fixed inset-0 z-40 bg-black/95 transition-opacity duration-300 lg:hidden ${
           mobileMenuOpen
             ? "opacity-100"
             : "pointer-events-none opacity-0"
@@ -172,16 +130,17 @@ export default function Navbar() {
 
 
 
-
-      {/* Mobile Menu Drawer */}
+      {/* Mobile Drawer */}
       <aside
-        className={`fixed right-0 top-0 z-50 h-full w-80 border-l border-zinc-800 bg-zinc-950 transition-transform duration-300 lg:hidden ${
+        className={`fixed right-0 top-0 z-50 h-full w-80 border-l border-zinc-800 bg-[#050505] text-white shadow-2xl transition-transform duration-300 lg:hidden ${
           mobileMenuOpen
             ? "translate-x-0"
             : "translate-x-full"
         }`}
+        aria-label="Mobile navigation"
       >
 
+        {/* Drawer Header */}
         <div className="flex items-center justify-between border-b border-zinc-800 p-6">
 
           <Image
@@ -189,14 +148,14 @@ export default function Navbar() {
             alt="Melted Mindz Records"
             width={160}
             height={50}
-            className="h-10 w-auto"
+            className="h-10 w-auto object-contain"
           />
 
 
           <button
             onClick={closeMenu}
-            className="text-3xl text-white"
-            aria-label="Close menu"
+            className="rounded-md p-2 text-3xl text-white transition hover:bg-zinc-900"
+            aria-label="Close navigation menu"
           >
             ×
           </button>
@@ -205,45 +164,70 @@ export default function Navbar() {
 
 
 
-        <div className="flex flex-col gap-6 p-8 text-lg font-medium">
+        {/* Mobile Links */}
+        <div className="flex flex-col gap-6 p-8 text-lg font-medium text-white">
 
-
-          <Link href="/" onClick={closeMenu}>
+          <Link
+            href="/"
+            onClick={closeMenu}
+            className="transition hover:text-zinc-300"
+          >
             Home
           </Link>
 
-
-          <Link href="/artists" onClick={closeMenu}>
+          <Link
+            href="/artists"
+            onClick={closeMenu}
+            className="transition hover:text-zinc-300"
+          >
             Artists
           </Link>
 
-
-          <Link href="/releases" onClick={closeMenu}>
+          <Link
+            href="/releases"
+            onClick={closeMenu}
+            className="transition hover:text-zinc-300"
+          >
             Releases
           </Link>
 
-
-          <Link href="/news" onClick={closeMenu}>
+          <Link
+            href="/news"
+            onClick={closeMenu}
+            className="transition hover:text-zinc-300"
+          >
             News
           </Link>
 
-
-          <Link href="/about" onClick={closeMenu}>
+          <Link
+            href="/about"
+            onClick={closeMenu}
+            className="transition hover:text-zinc-300"
+          >
             About
           </Link>
 
-
-          <Link href="/careers" onClick={closeMenu}>
+          <Link
+            href="/careers"
+            onClick={closeMenu}
+            className="transition hover:text-zinc-300"
+          >
             Careers
           </Link>
 
-
-          <Link href="/internships" onClick={closeMenu}>
+          <Link
+            href="/internships"
+            onClick={closeMenu}
+            className="transition hover:text-zinc-300"
+          >
             Internships
           </Link>
 
-
-          <Link href="/contact" onClick={closeMenu}>
+          <Link
+            href="/contact"
+            onClick={closeMenu}
+            className="transition hover:text-zinc-300"
+          >
             Contact
           </Link>
 
@@ -257,13 +241,12 @@ export default function Navbar() {
             Get Signed
           </a>
 
-
         </div>
 
       </aside>
 
 
-      {/* Mobile/Desktop spacing */}
+      {/* Navbar Spacer */}
       <div className="h-20" />
 
     </>
