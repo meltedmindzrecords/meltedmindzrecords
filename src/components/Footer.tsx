@@ -19,11 +19,13 @@ export default function Footer() {
           grid
           max-w-screen-2xl
           grid-cols-1
-          gap-x-32
-          gap-y-10
-          px-10
+          gap-12
+          px-6
           py-10
+          sm:px-10
           md:grid-cols-3
+          md:gap-x-20
+          lg:gap-x-32
         "
       >
 
@@ -32,64 +34,54 @@ export default function Footer() {
 
         <div className="flex flex-col">
 
-          <div className="mb-5 flex items-center gap-5">
+          <div className="
+            mb-5
+            flex
+            items-center
+            justify-center
+            gap-5
+            md:justify-start
+          ">
 
-            <a
-              href="https://www.tiktok.com/@meltedmindzrecords"
+            <a href="https://www.tiktok.com/@meltedmindzrecords"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition hover:text-zinc-400"
-            >
+              className="transition hover:text-zinc-400">
               <FaTiktok size={20} />
             </a>
 
-
-            <a
-              href="https://www.instagram.com/meltedmindzrecords"
+            <a href="https://www.instagram.com/meltedmindzrecords"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition hover:text-zinc-400"
-            >
+              className="transition hover:text-zinc-400">
               <FaInstagram size={20} />
             </a>
 
-
-            <a
-              href="https://x.com/mindzlabel"
+            <a href="https://x.com/mindzlabel"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition hover:text-zinc-400"
-            >
+              className="transition hover:text-zinc-400">
               <FaXTwitter size={20} />
             </a>
 
-
-            <a
-              href="https://www.youtube.com/@meltedmindzrecords"
+            <a href="https://www.youtube.com/@meltedmindzrecords"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition hover:text-zinc-400"
-            >
+              className="transition hover:text-zinc-400">
               <FaYoutube size={20} />
             </a>
 
-
-            <a
-              href="https://open.spotify.com/"
+            <a href="https://open.spotify.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition hover:text-zinc-400"
-            >
+              className="transition hover:text-zinc-400">
               <FaSpotify size={20} />
             </a>
 
-
-            <a
-              href="https://soundcloud.com/"
+            <a href="https://soundcloud.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition hover:text-zinc-400"
-            >
+              className="transition hover:text-zinc-400">
               <FaSoundcloud size={20} />
             </a>
 
@@ -97,7 +89,13 @@ export default function Footer() {
 
 
 
-          <h3 className="mb-3 text-base font-semibold">
+          <h3 className="
+            mb-3
+            text-center
+            text-base
+            font-semibold
+            md:text-left
+          ">
             Stay Connected
           </h3>
 
@@ -105,14 +103,21 @@ export default function Footer() {
 
           <form className="flex flex-col">
 
-            <div className="mb-3 flex">
+
+            <div className="
+              mb-3
+              flex
+              flex-col
+              gap-2
+              sm:flex-row
+            ">
 
               <input
                 type="email"
                 placeholder="Email Address"
                 className="
-                  flex-1
-                  rounded-l
+                  w-full
+                  rounded
                   border
                   border-zinc-700
                   bg-zinc-900
@@ -121,6 +126,7 @@ export default function Footer() {
                   text-sm
                   text-white
                   outline-none
+                  sm:rounded-l
                 "
               />
 
@@ -128,13 +134,15 @@ export default function Footer() {
               <button
                 type="submit"
                 className="
-                  rounded-r
+                  rounded
                   bg-white
                   px-5
+                  py-2
                   text-sm
                   text-black
                   transition
                   hover:bg-zinc-200
+                  sm:rounded-r
                 "
               >
                 Submit
@@ -166,20 +174,22 @@ export default function Footer() {
 
 
 
-            <p className="text-xs leading-relaxed text-zinc-500">
-
+            <p className="
+              text-center
+              text-xs
+              leading-relaxed
+              text-zinc-500
+              md:text-left
+            ">
               Please read our{" "}
-
               <Link
                 href="/privacy-policy"
                 className="underline hover:text-white"
               >
                 Privacy Policy
               </Link>
-
               {" "}for more information about how we handle your
               personal information.
-
             </p>
 
 
@@ -193,7 +203,12 @@ export default function Footer() {
 
         {/* COMPANY */}
 
-        <div className="flex flex-col items-center text-center">
+        <div className="
+          flex
+          flex-col
+          items-center
+          text-center
+        ">
 
 
           <h3 className="mb-3 text-base font-semibold">
@@ -201,40 +216,29 @@ export default function Footer() {
           </h3>
 
 
-          <div className="flex flex-col gap-3 text-sm text-zinc-400">
+          <div className="
+            flex
+            flex-col
+            gap-3
+            text-sm
+            text-zinc-400
+          ">
 
-
-            <Link
-              href="/news"
-              className="hover:text-white"
-            >
+            <Link href="/news" className="hover:text-white">
               News
             </Link>
 
-
-            <Link
-              href="/careers"
-              className="hover:text-white"
-            >
+            <Link href="/careers" className="hover:text-white">
               Careers
             </Link>
 
-
-            <Link
-              href="/internships"
-              className="hover:text-white"
-            >
+            <Link href="/internships" className="hover:text-white">
               Internships
             </Link>
 
-
-            <Link
-              href="/contact"
-              className="hover:text-white"
-            >
+            <Link href="/contact" className="hover:text-white">
               Contact
             </Link>
-
 
           </div>
 
@@ -246,7 +250,16 @@ export default function Footer() {
 
         {/* LEGAL */}
 
-        <div className="flex flex-col items-end text-xs text-zinc-400">
+        <div className="
+          flex
+          flex-col
+          items-center
+          text-center
+          text-xs
+          text-zinc-400
+          md:items-end
+          md:text-right
+        ">
 
 
           <span className="mb-4">
@@ -255,61 +268,39 @@ export default function Footer() {
 
 
 
-          <div
-            className="
-              flex
-              flex-col
-              items-end
-              gap-3
-              text-right
-            "
-          >
+          <div className="
+            flex
+            flex-col
+            gap-3
+          ">
 
 
-            <Link
-              href="/privacy-policy"
-              className="hover:text-white"
-            >
+            <Link href="/privacy-policy" className="hover:text-white">
               Privacy Policy
             </Link>
 
 
-            <Link
-              href="/terms-of-use"
-              className="hover:text-white"
-            >
+            <Link href="/terms-of-use" className="hover:text-white">
               Terms of Use
             </Link>
 
 
-            <Link
-              href="/cookie-policy"
-              className="hover:text-white"
-            >
+            <Link href="/cookie-policy" className="hover:text-white">
               Cookie Policy
             </Link>
 
 
-            <Link
-              href="/dmca"
-              className="hover:text-white"
-            >
+            <Link href="/dmca" className="hover:text-white">
               DMCA Policy
             </Link>
 
 
-            <Link
-              href="/accessibility"
-              className="hover:text-white"
-            >
+            <Link href="/accessibility" className="hover:text-white">
               Accessibility
             </Link>
 
 
-            <Link
-              href="/do-not-sell"
-              className="hover:text-white"
-            >
+            <Link href="/do-not-sell" className="hover:text-white">
               Do Not Sell or Share My Personal Information
             </Link>
 
@@ -321,7 +312,6 @@ export default function Footer() {
 
 
       </div>
-
 
     </footer>
   );
