@@ -27,12 +27,13 @@ export default function Footer() {
         "
       >
 
+
         {/* SOCIAL + NEWSLETTER */}
 
         <div className="flex flex-col">
 
           <div className="mb-5 flex items-center gap-5">
-Get-PSDrive C
+
             <a
               href="https://www.tiktok.com/@meltedmindzrecords"
               target="_blank"
@@ -41,6 +42,7 @@ Get-PSDrive C
             >
               <FaTiktok size={20} />
             </a>
+
 
             <a
               href="https://www.instagram.com/meltedmindzrecords"
@@ -51,6 +53,7 @@ Get-PSDrive C
               <FaInstagram size={20} />
             </a>
 
+
             <a
               href="https://x.com/mindzlabel"
               target="_blank"
@@ -59,6 +62,7 @@ Get-PSDrive C
             >
               <FaXTwitter size={20} />
             </a>
+
 
             <a
               href="https://www.youtube.com/@meltedmindzrecords"
@@ -69,6 +73,7 @@ Get-PSDrive C
               <FaYoutube size={20} />
             </a>
 
+
             <a
               href="https://open.spotify.com/"
               target="_blank"
@@ -77,6 +82,7 @@ Get-PSDrive C
             >
               <FaSpotify size={20} />
             </a>
+
 
             <a
               href="https://soundcloud.com/"
@@ -90,9 +96,11 @@ Get-PSDrive C
           </div>
 
 
+
           <h3 className="mb-3 text-base font-semibold">
             Stay Connected
           </h3>
+
 
 
           <form className="flex flex-col">
@@ -116,6 +124,7 @@ Get-PSDrive C
                 "
               />
 
+
               <button
                 type="submit"
                 className="
@@ -134,6 +143,7 @@ Get-PSDrive C
             </div>
 
 
+
             <div className="mb-3 flex items-start">
 
               <input
@@ -141,6 +151,7 @@ Get-PSDrive C
                 id="marketing"
                 className="mr-2 mt-1"
               />
+
 
               <label
                 htmlFor="marketing"
@@ -154,12 +165,13 @@ Get-PSDrive C
             </div>
 
 
+
             <p className="text-xs leading-relaxed text-zinc-500">
 
               Please read our{" "}
 
               <Link
-                href="/legal/privacy-policy"
+                href="/privacy-policy"
                 className="underline hover:text-white"
               >
                 Privacy Policy
@@ -170,15 +182,19 @@ Get-PSDrive C
 
             </p>
 
+
           </form>
 
         </div>
 
 
 
+
+
         {/* COMPANY */}
 
         <div className="flex flex-col items-center text-center">
+
 
           <h3 className="mb-3 text-base font-semibold">
             Company
@@ -187,11 +203,12 @@ Get-PSDrive C
 
           <div className="flex flex-col gap-3 text-sm text-zinc-400">
 
+
             <Link
               href="/news"
               className="hover:text-white"
             >
-              Press
+              News
             </Link>
 
 
@@ -218,9 +235,12 @@ Get-PSDrive C
               Contact
             </Link>
 
+
           </div>
 
         </div>
+
+
 
 
 
@@ -228,9 +248,11 @@ Get-PSDrive C
 
         <div className="flex flex-col items-end text-xs text-zinc-400">
 
+
           <span className="mb-4">
             © 2026 Melted Mindz Records
           </span>
+
 
 
           <div
@@ -243,8 +265,9 @@ Get-PSDrive C
             "
           >
 
+
             <Link
-              href="/legal/privacy-policy"
+              href="/privacy-policy"
               className="hover:text-white"
             >
               Privacy Policy
@@ -252,7 +275,7 @@ Get-PSDrive C
 
 
             <Link
-              href="/legal/terms-of-use"
+              href="/terms-of-use"
               className="hover:text-white"
             >
               Terms of Use
@@ -260,7 +283,7 @@ Get-PSDrive C
 
 
             <Link
-              href="/legal/cookie-policy"
+              href="/cookie-policy"
               className="hover:text-white"
             >
               Cookie Policy
@@ -268,7 +291,7 @@ Get-PSDrive C
 
 
             <Link
-              href="/legal/dmca"
+              href="/dmca"
               className="hover:text-white"
             >
               DMCA Policy
@@ -276,7 +299,7 @@ Get-PSDrive C
 
 
             <Link
-              href="/legal/accessibility"
+              href="/accessibility"
               className="hover:text-white"
             >
               Accessibility
@@ -284,13 +307,15 @@ Get-PSDrive C
 
 
             <Link
-              href="/legal/do-not-sell"
+              href="/do-not-sell"
               className="hover:text-white"
             >
               Do Not Sell or Share My Personal Information
             </Link>
 
+
           </div>
+
 
         </div>
 
