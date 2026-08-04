@@ -1,95 +1,162 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Artists() {
-  const artists = [
-    {
-      name: "Yxng Dreezy",
-      genre: "Melodic Rap / Hip-Hop",
-      slug: "yxng-dreezy",
-      image: "/artists/yxng-dreezy.jpg",
-    },
-    {
-      name: "Lil Rappy",
-      genre: "Melodic Rap / Hip-Hop",
-      slug: "lil-rappy",
-      image: "/artists/lil-rappy.jpg",
-    },
-    {
-      name: "GutZombie",
-      genre: "Alternative / Pop-Punk",
-      slug: "gutzombie",
-      image: "/artists/gutzombie.jpg",
-    },
-    {
-      name: "Rachel Ann",
-      genre: "Alternative / Pop-Punk",
-      slug: "rachel-ann",
-      image: "/artists/rachel-ann.jpg",
-    },
-    {
-      name: "Okay Boomhauer",
-      genre: "Rock / Alternative (Band)",
-      slug: "okay-boomhauer",
-      image: "/artists/okay-boomhauer.jpg",
-    },
-  ];
+type Artist = {
+  name: string;
+  slug: string;
+  image: string;
+};
+
+const artists: Artist[] = [
+  {
+    name: "GutZombie",
+    slug: "gutzombie",
+    image: "/artists/gutzombie.jpg",
+  },
+  {
+    name: "Lil Rappy",
+    slug: "lil-rappy",
+    image: "/artists/lil-rappy.jpg",
+  },
+  {
+    name: "Okay Boomhauer",
+    slug: "okay-boomhauer",
+    image: "/artists/okay-boomhauer.jpg",
+  },
+  {
+    name: "Rachel Ann",
+    slug: "rachel-ann",
+    image: "/artists/rachel-ann.jpg",
+  },
+  {
+    name: "Yxng Dreezy",
+    slug: "yxng-dreezy",
+    image: "/artists/yxng-dreezy.jpg",
+  },
+];
+
+export default function ArtistsPage() {
+  const sortedArtists = [...artists].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 
   return (
-    <main className="min-h-screen bg-black px-6 py-20 text-white">
+    <main className="min-h-screen bg-black text-white">
 
-      <h1 className="text-5xl font-bold">
-        Artists
-      </h1>
+      {/* PAGE HEADER */}
+      <section className="mx-auto max-w-7xl px-6 pb-12 pt-24 md:px-10 md:pb-16 md:pt-32">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
+          Melted Mindz Records
+        </p>
 
-      <p className="mt-6 max-w-2xl text-zinc-400">
-        Meet the artists of Melted Mindz Records.
-        A diverse roster of creators pushing music forward.
-      </p>
+        <h1 className="mt-4 text-6xl font-black uppercase tracking-tight md:text-8xl">
+          Artists
+        </h1>
+      </section>
 
-
-      <div className="mt-10 grid gap-6 md:grid-cols-3">
-
-        {artists.map((artist) => (
-          <div
-            key={artist.slug}
-            className="overflow-hidden rounded-xl border border-zinc-800 transition hover:border-white"
-          >
-
-            <div className="relative aspect-square">
-              <Image
-                src={artist.image}
-                alt={artist.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-
-
-            <div className="p-6">
-
-              <h2 className="text-2xl font-bold">
-                {artist.name}
-              </h2>
-
-              <p className="mt-3 text-zinc-400">
-                {artist.genre}
-              </p>
-
-
-              <Link
-                href={`/artists/${artist.slug}`}
-                className="mt-6 inline-block rounded-full bg-white px-5 py-2 text-sm font-semibold text-black hover:bg-zinc-200"
+      {/* ARTIST GRID */}
+      <section className="mx-auto max-w-7xl px-6 pb-24 md:px-10 md:pb-32">
+        <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {sortedArtists.map((artist) => (
+            <Link
+              key={artist.slug}
+              href={`/artists/${artist.slug}`}
+              className="group block"
+            >
+              {/* ARTIST CARD */}
+              <div
+                className="
+                  relative
+                  aspect-square
+                  overflow-hidden
+                  bg-zinc-900
+                  transition-transform
+                  duration-500
+                  ease-out
+                  group-hover:-rotate-3
+                "
               >
-                View Artist
-              </Link>
+                {/* ARTIST IMAGE */}
+                <Image
+                  src={artist.image}
+                  alt={artist.name}
+                  fill
+                  sizes="
+                    (max-width: 640px) 50vw,
+                    (max-width: 768px) 33vw,
+                    (max-width: 1024px) 25vw,
+                    20vw
+                  "
+                  className="
+                    object-cover
+                    transition-transform
+                    duration-700
+                    ease-out
+                    group-hover:scale-105
+                  "
+                />
 
-            </div>
+                {/* DARK OVERLAY */}
+                <div
+                  className="
+                    absolute
+                    inset-0
+                    bg-black/35
+                    transition-opacity
+                    duration-500
+                    group-hover:bg-black/20
+                  "
+                />
 
-          </div>
-        ))}
+                {/* CENTERED ARTIST NAME */}
+                <div className="absolute inset-0 flex items-center justify-center overflow-hidden px-4">
+                  <h2
+                    className="
+                      relative
+                      text-center
+                      text-lg
+                      font-black
+                      uppercase
+                      tracking-tight
+                      text-white
+                      transition-all
+                      duration-500
+                      ease-out
+                      group-hover:-translate-x-full
+                      group-hover:opacity-0
+                      sm:text-xl
+                      md:text-2xl
+                    "
+                  >
+                    {artist.name}
 
-      </div>
+                    {/* SHIMMER */}
+                    <span
+                      className="
+                        pointer-events-none
+                        absolute
+                        inset-y-0
+                        -left-full
+                        w-1/2
+                        skew-x-[-20deg]
+                        bg-gradient-to-r
+                        from-transparent
+                        via-white
+                        to-transparent
+                        opacity-0
+                        transition-all
+                        duration-700
+                        group-hover:left-[150%]
+                        group-hover:opacity-100
+                      "
+                    />
+                  </h2>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
 
     </main>
   );
