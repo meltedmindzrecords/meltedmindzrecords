@@ -7,11 +7,9 @@ import Link from "next/link";
 export default function Navbar() {
   const [showNavbar, setShowNavbar] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [artistMenuOpen, setArtistMenuOpen] = useState(false);
 
   const closeMenu = () => {
     setMobileMenuOpen(false);
-    setArtistMenuOpen(false);
   };
 
   return (
@@ -25,10 +23,7 @@ export default function Navbar() {
       {/* Navbar */}
       <nav
         onMouseEnter={() => setShowNavbar(true)}
-        onMouseLeave={() => {
-          setShowNavbar(false);
-          setArtistMenuOpen(false);
-        }}
+        onMouseLeave={() => setShowNavbar(false)}
         className={`fixed left-0 right-0 top-0 z-50 border-b border-zinc-800 bg-black transition-transform duration-300 ${
           showNavbar ? "translate-y-0" : "-translate-y-full"
         }`}
@@ -51,107 +46,68 @@ export default function Navbar() {
           <div className="hidden items-center gap-8 text-sm font-medium text-white lg:flex">
 
             <Link
-              className="transition hover:text-zinc-300"
               href="/"
+              className="transition hover:text-zinc-300"
             >
               Home
             </Link>
 
             <Link
-              className="transition hover:text-zinc-300"
               href="/artists"
+              className="transition hover:text-zinc-300"
             >
               Artists
             </Link>
 
             <Link
-              className="transition hover:text-zinc-300"
               href="/releases"
+              className="transition hover:text-zinc-300"
             >
               Releases
             </Link>
 
             <Link
-              className="transition hover:text-zinc-300"
               href="/news"
+              className="transition hover:text-zinc-300"
             >
               News
             </Link>
 
             <Link
-              className="transition hover:text-zinc-300"
               href="/about"
+              className="transition hover:text-zinc-300"
             >
               About
             </Link>
 
             <Link
-              className="transition hover:text-zinc-300"
               href="/careers"
+              className="transition hover:text-zinc-300"
             >
               Careers
             </Link>
 
             <Link
-              className="transition hover:text-zinc-300"
               href="/internships"
+              className="transition hover:text-zinc-300"
             >
               Internships
             </Link>
 
             <Link
-              className="transition hover:text-zinc-300"
               href="/contact"
+              className="transition hover:text-zinc-300"
             >
               Contact
             </Link>
 
-            {/* For Artists Dropdown */}
-            <div className="relative">
-
-              <button
-                type="button"
-                onClick={() => setArtistMenuOpen(!artistMenuOpen)}
-                className="flex items-center gap-2 transition hover:text-zinc-300"
-                aria-expanded={artistMenuOpen}
-                aria-haspopup="menu"
-              >
-                For Artists
-
-                <svg
-                  className={`h-4 w-4 transition-transform duration-200 ${
-                    artistMenuOpen ? "rotate-180" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m6 9 6 6 6-6"
-                  />
-                </svg>
-              </button>
-
-              {/* For Artists Dropdown */}
-              {artistMenuOpen && (
-                <div
-                  className="absolute right-0 top-full mt-4 w-56 overflow-hidden rounded-xl border border-zinc-800 bg-[#050505] shadow-2xl"
-                  role="menu"
-                >
-                  <a
-                    href="https://artisttools.meltedmindzrecords.com"
-                    className="block px-5 py-4 text-white transition hover:bg-white hover:text-black"
-                    role="menuitem"
-                  >
-                    Artist Portal
-                  </a>
-                </div>
-              )}
-
-            </div>
+            {/* For Artists */}
+            <a
+              href="https://artisttools.meltedmindzrecords.com"
+              className="rounded-lg border border-white px-5 py-2 transition hover:bg-white hover:text-black"
+            >
+              For Artists
+            </a>
 
             {/* Get Signed */}
             <a
@@ -297,56 +253,22 @@ export default function Navbar() {
             Contact
           </Link>
 
-          {/* Mobile For Artists */}
-          <div className="border-t border-zinc-800 pt-6">
-
-            <button
-              type="button"
-              onClick={() => setArtistMenuOpen(!artistMenuOpen)}
-              className="flex w-full items-center justify-between text-left transition hover:text-zinc-300"
-              aria-expanded={artistMenuOpen}
-            >
-              <span>For Artists</span>
-
-              <svg
-                className={`h-5 w-5 transition-transform duration-200 ${
-                  artistMenuOpen ? "rotate-180" : ""
-                }`}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m6 9 6 6 6-6"
-                />
-              </svg>
-            </button>
-
-            {artistMenuOpen && (
-              <div className="mt-4 border-l border-zinc-700 pl-5">
-
-                <a
-                  href="https://artisttools.meltedmindzrecords.com"
-                  onClick={closeMenu}
-                  className="block py-2 text-base text-zinc-300 transition hover:text-white"
-                >
-                  Artist Portal
-                </a>
-
-              </div>
-            )}
-
-          </div>
+          {/* For Artists */}
+          <a
+            href="https://artisttools.meltedmindzrecords.com"
+            onClick={closeMenu}
+            className="rounded-lg border border-white px-6 py-3 text-center transition hover:bg-white hover:text-black"
+          >
+            For Artists
+          </a>
 
           {/* Get Signed */}
           <a
             href="https://meltedmindzrecords.zite.so"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 rounded-lg border border-white px-6 py-3 text-center transition hover:bg-white hover:text-black"
+            onClick={closeMenu}
+            className="rounded-lg border border-white px-6 py-3 text-center transition hover:bg-white hover:text-black"
           >
             Get Signed
           </a>
@@ -357,7 +279,6 @@ export default function Navbar() {
 
       {/* Navbar Spacer */}
       <div className="h-20" />
-
     </>
   );
 }
