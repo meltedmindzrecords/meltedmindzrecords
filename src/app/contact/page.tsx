@@ -5,331 +5,158 @@ import {
   FaTiktok,
 } from "react-icons/fa6";
 
-
-export default function ContactPage() {
+export default function Contact() {
   return (
     <main className="min-h-screen bg-black text-white">
 
-
       {/* HERO */}
-
-      <section className="flex min-h-[60vh] items-center justify-center bg-gradient-to-b from-zinc-900 to-black px-6">
-
-        <div className="text-center">
-
-          <p className="uppercase tracking-[0.5em] text-red-500">
+      <section className="border-b border-white/10 px-6 py-24 sm:px-10 lg:px-16">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-white/50">
             Melted Mindz Records
           </p>
 
-
-          <h1 className="mt-6 text-6xl font-black sm:text-8xl">
+          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-8xl">
             Contact
           </h1>
 
-
-          <p className="mx-auto mt-6 max-w-3xl text-lg text-zinc-400">
-            Get in touch with Melted Mindz Records for business inquiries,
-            artist opportunities, press, and partnerships.
+          <p className="mt-8 max-w-2xl text-lg leading-8 text-white/60 sm:text-xl">
+            For business inquiries, artist-related matters, media inquiries,
+            partnerships, and general questions, contact the Melted Mindz
+            Records team.
           </p>
-
-
         </div>
-
       </section>
 
+      {/* CONTACT */}
+      <section className="px-6 py-20 sm:px-10 lg:px-16">
+        <div className="mx-auto grid max-w-7xl gap-16 lg:grid-cols-2">
 
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-white/40">
+              Get in Touch
+            </p>
 
-
-
-
-      {/* CONTACT OPTIONS */}
-
-      <section className="mx-auto max-w-7xl px-6 py-24">
-
-
-        <div className="grid gap-8 md:grid-cols-3">
-
-
-          <div className="rounded-3xl border border-zinc-800 bg-zinc-950 p-8">
-
-            <h2 className="text-2xl font-bold">
-              General Inquiries
+            <h2 className="mt-4 text-3xl font-bold sm:text-4xl">
+              Let’s talk.
             </h2>
 
-
-            <p className="mt-4 text-zinc-400">
-              Questions about Melted Mindz Records, artists, releases,
-              or partnerships.
+            <p className="mt-6 max-w-xl text-base leading-7 text-white/60">
+              Whether you are reaching out regarding an artist, release,
+              business opportunity, media request, or another label-related
+              matter, our team is available through the contact information
+              below.
             </p>
 
+            <div className="mt-10">
+              <a
+                href="mailto:info@meltedmindzrecords.com"
+                className="group inline-flex items-center border-b border-white/30 pb-2 text-lg font-medium transition hover:border-white"
+              >
+                info@meltedmindzrecords.com
 
-            <p className="mt-6 text-red-500">
-              info@meltedmindzrecords.com
-            </p>
-
+                <span className="ml-3 text-white/40 transition-transform group-hover:translate-x-1">
+                  →
+                </span>
+              </a>
+            </div>
           </div>
 
-
-
-
-
-          <div className="rounded-3xl border border-zinc-800 bg-zinc-950 p-8">
-
-            <h2 className="text-2xl font-bold">
-              Demo Submissions
-            </h2>
-
-
-            <p className="mt-4 text-zinc-400">
-              Interested in submitting music for consideration?
-              Send your best work to our A&R team.
+          <div className="border border-white/10 bg-white/[0.02] p-8 sm:p-10">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-white/40">
+              Contact Information
             </p>
 
+            <div className="mt-8 space-y-8">
 
-            <p className="mt-6 text-red-500">
-              demos@meltedmindzrecords.com
-            </p>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
+                  General & Business Inquiries
+                </p>
 
+                <a
+                  href="mailto:info@meltedmindzrecords.com"
+                  className="mt-2 block break-all text-base text-white transition hover:text-white/60"
+                >
+                  info@meltedmindzrecords.com
+                </a>
+              </div>
 
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
+                  Artist Submissions
+                </p>
+
+                <p className="mt-2 text-sm leading-6 text-white/50">
+                  Melted Mindz Records does not accept unsolicited demos.
+                  Please use the appropriate submission process when
+                  available.
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
+                  Response Time
+                </p>
+
+                <p className="mt-2 text-sm leading-6 text-white/50">
+                  Please allow reasonable time for our team to review and
+                  respond to your inquiry.
+                </p>
+              </div>
+
+            </div>
           </div>
-
-
-
-
-
-          <div className="rounded-3xl border border-zinc-800 bg-zinc-950 p-8">
-
-
-            <h2 className="text-2xl font-bold">
-              Business
-            </h2>
-
-
-            <p className="mt-4 text-zinc-400">
-              For licensing, partnerships, media, and business opportunities.
-            </p>
-
-
-            <p className="mt-6 text-red-500">
-              business@meltedmindzrecords.com
-            </p>
-
-
-          </div>
-
 
         </div>
-
-
       </section>
-
-
-
-
-
-
-      {/* CONTACT FORM */}
-
-      <section className="bg-zinc-950 px-6 py-24">
-
-
-        <div className="mx-auto max-w-3xl">
-
-
-          <h2 className="text-center text-5xl font-black">
-            Send A Message
-          </h2>
-
-
-
-          <form className="mt-12 space-y-6">
-
-
-            <input
-              type="text"
-              placeholder="Name"
-              className="
-                w-full
-                rounded-xl
-                border
-                border-zinc-700
-                bg-black
-                px-5
-                py-4
-                text-white
-                outline-none
-              "
-            />
-
-
-
-            <input
-              type="email"
-              placeholder="Email Address"
-              className="
-                w-full
-                rounded-xl
-                border
-                border-zinc-700
-                bg-black
-                px-5
-                py-4
-                text-white
-                outline-none
-              "
-            />
-
-
-
-            <select
-              className="
-                w-full
-                rounded-xl
-                border
-                border-zinc-700
-                bg-black
-                px-5
-                py-4
-                text-white
-              "
-            >
-
-              <option>
-                Select Inquiry Type
-              </option>
-
-              <option>
-                General Inquiry
-              </option>
-
-              <option>
-                Demo Submission
-              </option>
-
-              <option>
-                Business Partnership
-              </option>
-
-              <option>
-                Press Inquiry
-              </option>
-
-            </select>
-
-
-
-
-            <textarea
-              placeholder="Message"
-              rows={6}
-              className="
-                w-full
-                rounded-xl
-                border
-                border-zinc-700
-                bg-black
-                px-5
-                py-4
-                text-white
-                outline-none
-              "
-            />
-
-
-
-
-            <button
-              type="submit"
-              className="
-                w-full
-                rounded-full
-                bg-red-600
-                px-8
-                py-4
-                font-bold
-                hover:bg-red-500
-              "
-            >
-              Submit Message
-            </button>
-
-
-          </form>
-
-
-        </div>
-
-
-      </section>
-
-
-
-
-
-
 
       {/* SOCIALS */}
+      <section className="border-t border-white/10 px-6 py-16 sm:px-10 lg:px-16">
+        <div className="mx-auto max-w-7xl">
 
-      <section className="px-6 py-20 text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-white/40">
+            Follow Melted Mindz Records
+          </p>
 
+          <div className="mt-8 flex flex-wrap gap-4">
 
-        <h2 className="text-4xl font-black">
-          Follow Melted Mindz Records
-        </h2>
+            <a
+              href="#"
+              aria-label="Instagram"
+              className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
+            >
+              <FaInstagram className="text-lg" />
+            </a>
 
+            <a
+              href="#"
+              aria-label="X"
+              className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
+            >
+              <FaXTwitter className="text-lg" />
+            </a>
 
+            <a
+              href="#"
+              aria-label="YouTube"
+              className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
+            >
+              <FaYoutube className="text-lg" />
+            </a>
 
-        <div className="mt-8 flex justify-center gap-8 text-3xl">
+            <a
+              href="#"
+              aria-label="TikTok"
+              className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
+            >
+              <FaTiktok className="text-lg" />
+            </a>
 
-
-          <a
-            href="https://www.instagram.com/meltedmindzrecords"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-zinc-400"
-          >
-            <FaInstagram />
-          </a>
-
-
-
-          <a
-            href="https://x.com/mindzlabel"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-zinc-400"
-          >
-            <FaXTwitter />
-          </a>
-
-
-
-          <a
-            href="https://www.youtube.com/@meltedmindzrecords"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-zinc-400"
-          >
-            <FaYoutube />
-          </a>
-
-
-
-          <a
-            href="https://www.tiktok.com/@meltedmindzrecords"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-zinc-400"
-          >
-            <FaTiktok />
-          </a>
-
+          </div>
 
         </div>
-
-
       </section>
-
 
     </main>
   );

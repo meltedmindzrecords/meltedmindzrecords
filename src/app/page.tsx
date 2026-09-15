@@ -32,6 +32,12 @@ const artists = [
     image: "/artists/okay-boomhauer.jpg",
     slug: "okay-boomhauer",
   },
+  {
+    name: "Everstatic",
+    genre: "Alternative / Rock",
+    image: "/artists/everstatic.jpg",
+    slug: "everstatic",
+  },
 ];
 
 export default function Home() {
@@ -77,7 +83,6 @@ export default function Home() {
             collaboration, and culture.
           </p>
 
-
           <div className="mt-10 flex flex-wrap justify-center gap-5">
 
             <Link
@@ -86,7 +91,6 @@ export default function Home() {
             >
               Explore Artists
             </Link>
-
 
             <Link
               href="/releases"
@@ -101,8 +105,6 @@ export default function Home() {
 
       </section>
 
-
-
       {/* FEATURED RELEASE */}
 
       <section className="mx-auto max-w-7xl px-6 py-24">
@@ -111,9 +113,7 @@ export default function Home() {
           Featured Release
         </h2>
 
-
         <div className="mt-12 grid items-center gap-12 lg:grid-cols-2">
-
 
           <div className="relative aspect-square overflow-hidden rounded-3xl border border-red-900">
 
@@ -126,30 +126,24 @@ export default function Home() {
 
           </div>
 
-
-
           <div>
 
             <p className="uppercase tracking-widest text-red-500">
               New Release
             </p>
 
-
             <h3 className="mt-4 text-5xl font-bold">
               Still With Me
             </h3>
-
 
             <p className="mt-3 text-2xl text-red-200">
               Lil Rappy
             </p>
 
-
             <p className="mt-8 leading-8 text-red-100/80">
               An emotional release exploring loyalty, perseverance,
               and personal growth through melodic storytelling.
             </p>
-
 
             <a
               href="https://too.fm/stillwithme"
@@ -162,13 +156,9 @@ export default function Home() {
 
           </div>
 
-
         </div>
 
       </section>
-
-
-
 
       {/* ARTISTS */}
 
@@ -178,9 +168,7 @@ export default function Home() {
           Featured Artists
         </h2>
 
-
         <div className="mt-12 grid gap-8 md:grid-cols-3">
-
 
           {artists.map((artist) => (
 
@@ -201,18 +189,15 @@ export default function Home() {
 
               </div>
 
-
               <div className="p-6">
 
                 <h3 className="text-2xl font-bold">
                   {artist.name}
                 </h3>
 
-
                 <p className="mt-2 text-red-200">
                   {artist.genre}
                 </p>
-
 
               </div>
 
@@ -220,68 +205,51 @@ export default function Home() {
 
           ))}
 
-
         </div>
 
       </section>
-
-
-
 
       {/* STATS */}
 
       <section className="bg-red-950/30 px-6 py-20">
 
-
         <div className="grid gap-10 text-center md:grid-cols-4">
 
-
           <div>
-            <h3 className="text-5xl font-black">5+</h3>
+            <h3 className="text-5xl font-black">6+</h3>
             <p>Artists</p>
           </div>
-
 
           <div>
             <h3 className="text-5xl font-black">1</h3>
             <p>Featured Release</p>
           </div>
 
-
           <div>
             <h3 className="text-5xl font-black">100K+</h3>
             <p>Streams</p>
           </div>
-
 
           <div>
             <h3 className="text-5xl font-black">2024</h3>
             <p>Founded</p>
           </div>
 
-
         </div>
 
-
       </section>
-
-
-
 
       {/* GET SIGNED */}
 
       <section className="px-6 py-24 text-center">
 
-
         <h2 className="text-5xl font-black">
           Ready To Make Your Mark?
         </h2>
 
-
         <p className="mt-6 text-red-100/70">
           Learn more about opportunities with Melted Mindz Records.
         </p>
-
 
         <Link
           href="/how-to-get-signed"
@@ -290,9 +258,7 @@ export default function Home() {
           Get Signed
         </Link>
 
-
       </section>
-
 
     </main>
   );

@@ -9,6 +9,11 @@ type Artist = {
 
 const artists: Artist[] = [
   {
+    name: "Everstatic",
+    slug: "everstatic",
+    image: "/artists/everstatic.jpg",
+  },
+  {
     name: "GutZombie",
     slug: "gutzombie",
     image: "/artists/gutzombie.jpg",
