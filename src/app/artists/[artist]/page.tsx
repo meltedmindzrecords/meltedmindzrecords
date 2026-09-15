@@ -35,6 +35,13 @@ const artists = {
     image: "/artists/okay-boomhauer.jpg",
     bio: "Okay Boomhauer delivers a rock-driven sound with alternative influences and a unique band identity.",
   },
+
+  "everstatic": {
+    name: "Everstatic",
+    genre: "Alternative / Rock",
+    image: "/artists/everstatic.jpg",
+    bio: "Everstatic is an alternative rock artist bringing a distinctive sound, creative energy, and a modern approach to the Melted Mindz Records roster.",
+  },
 };
 
 export default async function ArtistProfile({
@@ -68,7 +75,7 @@ export default async function ArtistProfile({
             alt={artistInfo.name}
             width={1200}
             height={1200}
-            className="w-full h-auto object-contain"
+            className="h-auto w-full object-contain"
             priority
           />
         </div>
@@ -83,9 +90,9 @@ export default async function ArtistProfile({
 
       </section>
 
-
       {/* About */}
       <section className="mx-auto mt-12 max-w-3xl">
+
         <h2 className="text-3xl font-bold">
           About
         </h2>
@@ -93,25 +100,29 @@ export default async function ArtistProfile({
         <p className="mt-4 text-zinc-400">
           {artistInfo.bio}
         </p>
-      </section>
 
+      </section>
 
       {/* Music */}
       <section className="mx-auto mt-12 max-w-3xl">
+
         <h2 className="text-3xl font-bold">
           Music
         </h2>
 
         <div className="mt-6 rounded-xl border border-zinc-800 p-6">
+
           <p className="text-zinc-400">
             Latest releases, music videos, and streaming links coming soon.
           </p>
-        </div>
-      </section>
 
+        </div>
+
+      </section>
 
       {/* Listen */}
       <section className="mx-auto mt-12 max-w-3xl">
+
         <h2 className="text-3xl font-bold">
           Listen
         </h2>
@@ -131,11 +142,12 @@ export default async function ArtistProfile({
           </button>
 
         </div>
-      </section>
 
+      </section>
 
       {/* Follow */}
       <section className="mx-auto mt-12 max-w-3xl">
+
         <h2 className="text-3xl font-bold">
           Follow
         </h2>
@@ -143,6 +155,7 @@ export default async function ArtistProfile({
         <p className="mt-4 text-zinc-400">
           Social links and artist updates coming soon.
         </p>
+
       </section>
 
     </main>
