@@ -15,12 +15,6 @@ const artists = [
     slug: "lil-rappy",
   },
   {
-    name: "GutZombie",
-    genre: "Alternative / Pop-Punk",
-    image: "/artists/gutzombie.jpg",
-    slug: "gutzombie",
-  },
-  {
     name: "Rachel Ann",
     genre: "Alternative / Pop-Punk",
     image: "/artists/rachel-ann.jpg",
@@ -216,7 +210,7 @@ export default function Home() {
         <div className="grid gap-10 text-center md:grid-cols-4">
 
           <div>
-            <h3 className="text-5xl font-black">6+</h3>
+            <h3 className="text-5xl font-black">5+</h3>
             <p>Artists</p>
           </div>
 

@@ -14,11 +14,6 @@ const artists: Artist[] = [
     image: "/artists/everstatic.jpg",
   },
   {
-    name: "GutZombie",
-    slug: "gutzombie",
-    image: "/artists/gutzombie.jpg",
-  },
-  {
     name: "Lil Rappy",
     slug: "lil-rappy",
     image: "/artists/lil-rappy.jpg",

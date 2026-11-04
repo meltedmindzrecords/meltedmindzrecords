@@ -15,13 +15,6 @@ const artists = {
     bio: "Lil Rappy delivers melodic energy, creative songwriting, and a unique voice within modern hip-hop.",
   },
 
-  "gutzombie": {
-    name: "GutZombie",
-    genre: "Alternative / Pop-Punk",
-    image: "/artists/gutzombie.jpg",
-    bio: "GutZombie blends alternative influences with pop-punk energy and a unique creative identity.",
-  },
-
   "rachel-ann": {
     name: "Rachel Ann",
     genre: "Alternative / Pop-Punk",
