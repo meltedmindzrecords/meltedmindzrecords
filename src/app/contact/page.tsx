@@ -10,13 +10,13 @@ export default function Contact() {
     <main className="min-h-screen bg-black text-white">
 
       {/* HERO */}
-      <section className="border-b border-white/10 px-6 py-24 sm:px-10 lg:px-16">
+      <section className="border-b border-white/10 px-6 pb-20 pt-32 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-7xl">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-white/50">
             Melted Mindz Records
           </p>
 
-          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-8xl">
+          <h1 className="display text-6xl sm:text-8xl">
             Contact
           </h1>
 
@@ -122,7 +122,9 @@ export default function Contact() {
           <div className="mt-8 flex flex-wrap gap-4">
 
             <a
-              href="#"
+              href="https://www.instagram.com/meltedmindzrecords"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Instagram"
               className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
             >
@@ -130,7 +132,9 @@ export default function Contact() {
             </a>
 
             <a
-              href="#"
+              href="https://x.com/mindzlabel"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="X"
               className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
             >
@@ -138,7 +142,9 @@ export default function Contact() {
             </a>
 
             <a
-              href="#"
+              href="https://www.youtube.com/@meltedmindzrecords"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="YouTube"
               className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
             >
@@ -146,7 +152,9 @@ export default function Contact() {
             </a>
 
             <a
-              href="#"
+              href="https://www.tiktok.com/@meltedmindzrecords"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="TikTok"
               className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
             >

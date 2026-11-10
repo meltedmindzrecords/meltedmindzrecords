@@ -2,11 +2,11 @@ import Link from "next/link";
 
 export default function CareersPage() {
   return (
-    <main className="min-h-screen bg-black px-6 py-24 text-white">
+    <main className="min-h-screen bg-black px-6 pb-24 pt-32 text-white">
 
       {/* Hero */}
       <section className="mx-auto max-w-5xl text-center">
-        <h1 className="text-5xl font-bold tracking-tight md:text-6xl">
+        <h1 className="display text-6xl sm:text-8xl">
           Careers at Melted Mindz Records
         </h1>
 

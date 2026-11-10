@@ -2,234 +2,187 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { ARTIST_TOOLS_URL, GET_SIGNED_URL, labelSocials } from "@/lib/site";
+import { LinkIcon } from "@/components/Icons";
+
+const primary = [
+  { href: "/artists", label: "Artists" },
+  { href: "/releases", label: "Releases" },
+  { href: "/news", label: "News" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+];
+
+const secondary = [
+  { href: "/careers", label: "Careers" },
+  { href: "/internships", label: "Internships" },
+];
 
 export default function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
-  const closeMenu = () => {
-    setMobileMenuOpen(false);
-  };
+  // Close the menu on navigation.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+  const solid = scrolled || open;
 
   return (
     <>
-      {/* Navbar */}
-      <nav className="fixed left-0 right-0 top-0 z-50 border-b border-zinc-800 bg-black">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-
-          {/* Logo */}
-          <Link href="/" aria-label="Melted Mindz Records Home">
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+          solid
+            ? "border-b border-white/10 bg-black/90 backdrop-blur-md"
+            : "border-b border-transparent bg-gradient-to-b from-black/70 to-transparent"
+        }`}
+      >
+        <nav className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 sm:px-8">
+          <Link href="/" aria-label="Melted Mindz Records home" className="flex items-center gap-3">
             <Image
               src="/logo/Melted.Mindz.Records-Logo.jpg"
               alt="Melted Mindz Records"
-              width={220}
-              height={70}
+              width={150}
+              height={150}
               priority
-              className="h-14 w-auto object-contain"
+              className="h-10 w-10 rounded-full object-cover"
             />
+            <span className="hidden text-[12px] font-semibold uppercase tracking-[0.3em] sm:block">
+              Melted Mindz Records
+            </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden items-center gap-8 text-sm font-medium text-white lg:flex">
-
-            <Link
-              href="/"
-              className="transition hover:text-zinc-300"
-            >
-              Home
-            </Link>
-
-            <Link
-              href="/artists"
-              className="transition hover:text-zinc-300"
-            >
-              Artists
-            </Link>
-
-            <Link
-              href="/releases"
-              className="transition hover:text-zinc-300"
-            >
-              Releases
-            </Link>
-
-            <Link
-              href="/news"
-              className="transition hover:text-zinc-300"
-            >
-              News
-            </Link>
-
-            <Link
-              href="/about"
-              className="transition hover:text-zinc-300"
-            >
-              About
-            </Link>
-
-            <Link
-              href="/careers"
-              className="transition hover:text-zinc-300"
-            >
-              Careers
-            </Link>
-
-            <Link
-              href="/internships"
-              className="transition hover:text-zinc-300"
-            >
-              Internships
-            </Link>
-
-            <Link
-              href="/contact"
-              className="transition hover:text-zinc-300"
-            >
-              Contact
-            </Link>
-
+          <div className="hidden items-center gap-9 lg:flex">
+            {primary.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className={`text-[12px] font-medium uppercase tracking-[0.22em] transition hover:text-white ${
+                  isActive(l.href) ? "text-white" : "text-white/60"
+                }`}
+              >
+                {l.label}
+              </Link>
+            ))}
             <a
-              href="https://artisttools.meltedmindzrecords.com"
-              className="rounded-lg border border-white px-5 py-2 transition hover:bg-white hover:text-black"
-            >
-              For Artists
-            </a>
-
-            <a
-              href="https://meltedmindzrecords.zite.so"
+              href={GET_SIGNED_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-lg border border-white px-5 py-2 transition hover:bg-white hover:text-black"
+              className="border border-white px-5 py-2.5 text-[12px] font-semibold uppercase tracking-[0.2em] transition hover:bg-white hover:text-black"
             >
               Get Signed
             </a>
-
           </div>
 
-          {/* Mobile Menu Button */}
           <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="rounded-md p-2 text-white transition hover:bg-zinc-900 lg:hidden"
-            aria-label="Open navigation menu"
+            onClick={() => setOpen((v) => !v)}
+            className="relative -mr-2 flex h-11 w-11 items-center justify-center lg:hidden"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
           >
-            <svg
-              className="h-8 w-8"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
+            <span
+              className={`absolute h-[1.5px] w-6 bg-white transition duration-300 ${
+                open ? "rotate-45" : "-translate-y-[5px]"
+              }`}
+            />
+            <span
+              className={`absolute h-[1.5px] w-6 bg-white transition duration-300 ${
+                open ? "-rotate-45" : "translate-y-[5px]"
+              }`}
+            />
           </button>
+        </nav>
+      </header>
 
-        </div>
-      </nav>
-
-      {/* Mobile Overlay */}
+      {/* Mobile menu: full screen, big type */}
       <div
-        className={`fixed inset-0 z-40 bg-black/95 transition-opacity duration-300 lg:hidden ${
-          mobileMenuOpen
-            ? "opacity-100"
-            : "pointer-events-none opacity-0"
+        className={`fixed inset-0 z-40 flex flex-col bg-black px-5 pb-10 pt-24 transition-opacity duration-300 sm:px-8 lg:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
-        onClick={closeMenu}
-      />
-
-      {/* Mobile Drawer */}
-      <aside
-        className={`fixed right-0 top-0 z-50 h-full w-80 border-l border-zinc-800 bg-[#050505] text-white shadow-2xl transition-transform duration-300 lg:hidden ${
-          mobileMenuOpen
-            ? "translate-x-0"
-            : "translate-x-full"
-        }`}
-        aria-label="Mobile navigation"
+        aria-hidden={!open}
       >
+        <nav className="flex flex-col gap-1">
+          {primary.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              tabIndex={open ? 0 : -1}
+              className={`display text-[3.4rem] leading-[1.05] transition ${
+                isActive(l.href) ? "text-white" : "text-white/80 hover:text-white"
+              }`}
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
 
-        {/* Drawer Header */}
-        <div className="flex items-center justify-between border-b border-zinc-800 p-6">
-
-          <Image
-            src="/logo/Melted.Mindz.Records-Logo.jpg"
-            alt="Melted Mindz Records"
-            width={160}
-            height={50}
-            className="h-10 w-auto object-contain"
-          />
-
-          <button
-            onClick={closeMenu}
-            className="rounded-md p-2 text-3xl text-white transition hover:bg-zinc-900"
-            aria-label="Close navigation menu"
-          >
-            ×
-          </button>
-
-        </div>
-
-        {/* Mobile Links */}
-        <div className="flex flex-col gap-6 p-8 text-lg font-medium text-white">
-
-          <Link href="/" onClick={closeMenu}>
-            Home
-          </Link>
-
-          <Link href="/artists" onClick={closeMenu}>
-            Artists
-          </Link>
-
-          <Link href="/releases" onClick={closeMenu}>
-            Releases
-          </Link>
-
-          <Link href="/news" onClick={closeMenu}>
-            News
-          </Link>
-
-          <Link href="/about" onClick={closeMenu}>
-            About
-          </Link>
-
-          <Link href="/careers" onClick={closeMenu}>
-            Careers
-          </Link>
-
-          <Link href="/internships" onClick={closeMenu}>
-            Internships
-          </Link>
-
-          <Link href="/contact" onClick={closeMenu}>
-            Contact
-          </Link>
-
+        <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
+          {secondary.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              tabIndex={open ? 0 : -1}
+              className="text-[12px] uppercase tracking-[0.22em] text-white/60 hover:text-white"
+            >
+              {l.label}
+            </Link>
+          ))}
           <a
-            href="https://artisttools.meltedmindzrecords.com"
-            onClick={closeMenu}
-            className="rounded-lg border border-white px-6 py-3 text-center transition hover:bg-white hover:text-black"
+            href={ARTIST_TOOLS_URL}
+            tabIndex={open ? 0 : -1}
+            className="text-[12px] uppercase tracking-[0.22em] text-white/60 hover:text-white"
           >
             For Artists
           </a>
+        </div>
 
+        <div className="mt-auto">
           <a
-            href="https://meltedmindzrecords.zite.so"
+            href={GET_SIGNED_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={closeMenu}
-            className="rounded-lg border border-white px-6 py-3 text-center transition hover:bg-white hover:text-black"
+            tabIndex={open ? 0 : -1}
+            className="block bg-white py-4 text-center text-[13px] font-semibold uppercase tracking-[0.2em] text-black"
           >
             Get Signed
           </a>
-
+          <div className="mt-6 flex gap-5">
+            {labelSocials.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                tabIndex={open ? 0 : -1}
+                className="text-xl text-white/70 hover:text-white"
+              >
+                <LinkIcon label={s.label} />
+              </a>
+            ))}
+          </div>
         </div>
-
-      </aside>
-
-      {/* Navbar Spacer */}
-      <div className="h-20" />
+      </div>
     </>
   );
 }

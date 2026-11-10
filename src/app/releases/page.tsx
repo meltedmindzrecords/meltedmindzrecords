@@ -1,302 +1,135 @@
+import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 
-import { getReleases, isOptimizable, pickFeatured } from "@/lib/content";
+import { StreamButtons } from "@/components/LinkButtons";
+import {
+  artistFor,
+  getArtists,
+  getReleases,
+  isOptimizable,
+  listenLink,
+  pickFeatured,
+} from "@/lib/content";
 
 // Content is edited in Supabase; refresh at most once a minute.
 export const revalidate = 60;
 
+export const metadata: Metadata = {
+  title: "Releases",
+  description: "Singles, EPs and albums from Melted Mindz Records.",
+};
+
 export default async function ReleasesPage() {
-  const releases = await getReleases();
+  const [releases, artists] = await Promise.all([getReleases(), getArtists()]);
   const release = pickFeatured(releases);
   const otherReleases = releases.filter((r) => r !== release);
-  const releaseLink = release.link ?? "#";
+  const artist = release ? artistFor(release, artists) : null;
 
   return (
-    <main className="min-h-screen bg-black text-white">
-
-      {/* HERO */}
-
-      <section className="relative flex h-[55vh] items-center justify-center border-b border-zinc-800 bg-gradient-to-b from-zinc-900 to-black">
-
-        <div className="px-6 text-center">
-
-          <p className="mb-4 uppercase tracking-[0.4em] text-red-500">
-            Melted Mindz Records
-          </p>
-
-          <h1 className="text-5xl font-extrabold sm:text-7xl">
-            Releases
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-3xl text-lg text-zinc-400">
-            Discover singles, albums, EPs, and music releases from
-            Melted Mindz Records.
-          </p>
-
-        </div>
-
+    <>
+      <section className="mx-auto max-w-[1440px] px-5 pt-28 sm:px-8 sm:pt-36">
+        <p className="eyebrow text-white/50">Melted Mindz Records</p>
+        <h1 className="display mt-4 text-[22vw] sm:text-[11rem]">Releases</h1>
       </section>
 
-
-
-      {/* FEATURED RELEASE */}
-
-      <section className="mx-auto max-w-7xl px-6 py-20">
-
-        <h2 className="mb-10 text-4xl font-bold">
-          Featured Release
-        </h2>
-
-
-        <div className="grid gap-12 lg:grid-cols-2">
-
-
-          {/* COVER */}
-
-          <div className="relative aspect-square overflow-hidden rounded-3xl border border-zinc-800">
-
-            <Image
-              src={release.cover}
-              alt={`${release.title} cover`}
-              fill
-              className="object-cover"
-              unoptimized={!isOptimizable(release.cover)}
-            />
-
-          </div>
-
-
-
-          {/* DETAILS */}
-
-          <div className="flex flex-col justify-center">
-
-
-            <span className="text-sm uppercase tracking-[0.3em] text-red-500">
-              {release.type}
-            </span>
-
-
-            <h2 className="mt-4 text-5xl font-bold">
-              {release.title}
-            </h2>
-
-
-            <p className="mt-2 text-2xl text-zinc-400">
-              {release.artist}
-            </p>
-
-
-            <p className="mt-2 text-sm text-zinc-500">
-              Released {release.releaseDate}
-            </p>
-
-
-            <p className="mt-8 leading-8 text-zinc-300">
-              {release.description}
-            </p>
-
-
-
-            {/* STREAM BUTTONS */}
-
-            <div className="mt-10 flex flex-wrap gap-4">
-
-
-              <a
-                href={release.spotifyUrl ?? releaseLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full bg-green-500 px-6 py-3 font-semibold text-black transition hover:scale-105"
-              >
-                Spotify
-              </a>
-
-
-
-              <a
-                href={release.appleMusicUrl ?? releaseLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full bg-white px-6 py-3 font-semibold text-black transition hover:scale-105"
-              >
-                Apple Music
-              </a>
-
-
-
-              <a
-                href={release.youtubeUrl ?? releaseLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full bg-red-600 px-6 py-3 font-semibold transition hover:scale-105"
-              >
-                YouTube
-              </a>
-
-
+      {release && (
+        <section className="mx-auto max-w-[1440px] px-5 py-14 sm:px-8 lg:py-20">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-20">
+            <div className="relative aspect-square w-full overflow-hidden bg-zinc-900">
+              <Image
+                src={release.cover}
+                alt={`${release.title} cover art`}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+                unoptimized={!isOptimizable(release.cover)}
+              />
             </div>
-
-
-
-
-            {/* TOO.FM */}
-
-            <a
-              href={releaseLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-10 inline-flex w-fit rounded-full border border-white px-8 py-3 font-semibold transition hover:bg-white hover:text-black"
-            >
-              View Release
-            </a>
-
-
+            <div>
+              <p className="eyebrow text-white/50">
+                {[release.featured ? "Featured" : null, release.type].filter(Boolean).join(" · ")}
+              </p>
+              <h2 className="display mt-4 text-6xl sm:text-8xl">{release.title}</h2>
+              <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/80">
+                {artist ? (
+                  <Link href={`/artists/${artist.slug}`} className="hover:underline">
+                    {release.artist}
+                  </Link>
+                ) : (
+                  release.artist
+                )}
+              </p>
+              {release.releaseDate && (
+                <p className="mt-2 text-sm text-white/50">Released {release.releaseDate}</p>
+              )}
+              {release.description && (
+                <p className="mt-8 max-w-lg text-[17px] leading-8 text-white/70">{release.description}</p>
+              )}
+              <div className="mt-10">
+                <StreamButtons
+                  links={[
+                    { label: "Listen now", href: release.link },
+                    { label: "Spotify", href: release.spotifyUrl },
+                    { label: "Apple Music", href: release.appleMusicUrl },
+                    { label: "YouTube", href: release.youtubeUrl },
+                  ]}
+                />
+              </div>
+            </div>
           </div>
 
-
-        </div>
-
-
-      </section>
-
-
-
-
-
-      {/* RELEASE INFO */}
-
-      <section className="bg-zinc-950 px-6 py-20">
-
-        <div className="mx-auto max-w-7xl">
-
-
-          <h2 className="text-4xl font-bold">
-            About This Release
-          </h2>
-
-
-          <p className="mt-6 max-w-3xl leading-8 text-zinc-400">
-            {release.about ||
-              `Melted Mindz Records presents "${release.title}" by ${release.artist}.`}
-          </p>
-
-
-        </div>
-
-      </section>
-
-
-
-
-
-      {/* MORE RELEASES (only shows when there is more than one release) */}
-
-      {otherReleases.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 py-20">
-          <h2 className="mb-10 text-4xl font-bold">More Releases</h2>
-
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4">
-            {otherReleases.map((r) => {
-              const href = r.link ?? r.spotifyUrl ?? r.appleMusicUrl ?? r.youtubeUrl;
-              const card = (
-                <>
-                  <div className="relative aspect-square overflow-hidden rounded-3xl border border-zinc-800">
-                    <Image
-                      src={r.cover}
-                      alt={`${r.title} cover`}
-                      fill
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      unoptimized={!isOptimizable(r.cover)}
-                    />
-                  </div>
-                  <p className="mt-4 text-xs uppercase tracking-[0.3em] text-red-500">
-                    {r.type}
-                  </p>
-                  <h3 className="mt-2 text-xl font-bold">{r.title}</h3>
-                  <p className="text-zinc-400">{r.artist}</p>
-                  {r.releaseDate && (
-                    <p className="mt-1 text-sm text-zinc-500">{r.releaseDate}</p>
-                  )}
-                </>
-              );
-              return href ? (
-                <a
-                  key={r.slug}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block"
-                >
-                  {card}
-                </a>
-              ) : (
-                <div key={r.slug} className="group block">
-                  {card}
-                </div>
-              );
-            })}
-          </div>
+          {release.about && release.about !== release.description && (
+            <div className="mt-20 grid gap-8 border-t border-white/10 pt-12 lg:grid-cols-12">
+              <p className="eyebrow text-white/50 lg:col-span-3">About the release</p>
+              <p className="text-xl leading-relaxed text-white/80 lg:col-span-8">{release.about}</p>
+            </div>
+          )}
         </section>
       )}
 
-
-
-      {/* NEWSLETTER */}
-
-      <section className="px-6 py-24 text-center">
-
-
-        <h2 className="text-4xl font-bold">
-          Stay Connected
-        </h2>
-
-
-        <p className="mx-auto mt-6 max-w-2xl text-zinc-400">
-          Follow Melted Mindz Records for new releases, artist announcements,
-          merchandise drops, and exclusive content.
-        </p>
-
-
-
-        <div className="mt-10 flex flex-wrap justify-center gap-4">
-
-
-          <a
-            href={releaseLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full bg-white px-8 py-3 font-semibold text-black"
-          >
-            Listen Now
-          </a>
-
-
-
-          <a
-            href="#"
-            className="rounded-full border border-white px-8 py-3 font-semibold"
-          >
-            Instagram
-          </a>
-
-
-
-          <a
-            href="#"
-            className="rounded-full border border-white px-8 py-3 font-semibold"
-          >
-            YouTube
-          </a>
-
-
-        </div>
-
-
-      </section>
-
-
-    </main>
+      {/* MORE RELEASES (only when there is more than one) */}
+      {otherReleases.length > 0 && (
+        <section className="border-t border-white/10">
+          <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8">
+            <h2 className="display text-5xl sm:text-7xl">Catalog</h2>
+            <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
+              {otherReleases.map((r) => {
+                const href = listenLink(r);
+                const inner = (
+                  <>
+                    <div className="relative aspect-square overflow-hidden bg-zinc-900">
+                      <Image
+                        src={r.cover}
+                        alt={`${r.title} cover art`}
+                        fill
+                        sizes="(max-width: 640px) 50vw, 25vw"
+                        className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                        unoptimized={!isOptimizable(r.cover)}
+                      />
+                    </div>
+                    <p className="mt-4 text-base font-semibold">{r.title}</p>
+                    <p className="mt-1 text-sm text-white/60">{r.artist}</p>
+                    <p className="mt-1 text-[11px] uppercase tracking-[0.2em] text-white/40">
+                      {[r.type, r.releaseDate].filter(Boolean).join(" · ")}
+                    </p>
+                  </>
+                );
+                return href ? (
+                  <a key={r.slug} href={href} target="_blank" rel="noopener noreferrer" className="group block">
+                    {inner}
+                  </a>
+                ) : (
+                  <div key={r.slug} className="group">
+                    {inner}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+    </>
   );
 }
