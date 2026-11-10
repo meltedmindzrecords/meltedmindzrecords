@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import ArtistCard from "@/components/ArtistCard";
-import { SocialIcons, StreamButtons, present } from "@/components/LinkButtons";
+import { SocialIcons, present } from "@/components/LinkButtons";
 import {
   getArtist,
   getArtists,
@@ -45,17 +45,15 @@ export default async function ArtistProfile({ params }: Props) {
 
   if (!info) notFound();
 
-  const music = [
+  // Streaming + social links share one row of small round icons; empty links are hidden.
+  const links = [
     { label: "Spotify", href: info.spotifyUrl },
     { label: "Apple Music", href: info.appleMusicUrl },
     { label: "YouTube", href: info.youtubeUrl },
-  ];
-  const social = [
     { label: "Instagram", href: info.instagramUrl },
     { label: "TikTok", href: info.tiktokUrl },
   ];
-  const hasMusic = present(music).length > 0;
-  const hasSocial = present(social).length > 0;
+  const hasLinks = present(links).length > 0;
   const theirReleases = releasesFor(info, releases);
   const others = artists.filter((a) => a.slug !== info.slug);
 
@@ -81,12 +79,11 @@ export default async function ArtistProfile({ params }: Props) {
         </div>
       </section>
 
-      {/* LISTEN + FOLLOW */}
-      {(hasMusic || hasSocial) && (
+      {/* LISTEN + FOLLOW: one row of round icons */}
+      {hasLinks && (
         <section className="border-b border-white/10">
-          <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-5 py-10 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
-            {hasMusic && <StreamButtons links={music} />}
-            {hasSocial && <SocialIcons links={social} />}
+          <div className="mx-auto max-w-[1440px] px-5 py-8 sm:px-8">
+            <SocialIcons links={links} labelPrefix={info.name} />
           </div>
         </section>
       )}

@@ -34,7 +34,16 @@ export function StreamButtons({ links }: { links: NamedLink[] }) {
 }
 
 /** Round social icons. */
-export function SocialIcons({ links, size = "md" }: { links: NamedLink[]; size?: "sm" | "md" }) {
+export function SocialIcons({
+  links,
+  size = "md",
+  labelPrefix,
+}: {
+  links: NamedLink[];
+  size?: "sm" | "md";
+  /** e.g. the artist name, so screen readers hear "LIL Rappy on Spotify". */
+  labelPrefix?: string;
+}) {
   const shown = present(links);
   if (shown.length === 0) return null;
   const box = size === "sm" ? "h-10 w-10 text-base" : "h-12 w-12 text-lg";
@@ -46,7 +55,7 @@ export function SocialIcons({ links, size = "md" }: { links: NamedLink[]; size?:
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={label}
+          aria-label={labelPrefix ? `${labelPrefix} on ${label}` : label}
           title={label}
           className={`flex ${box} items-center justify-center rounded-full border border-white/25 text-white transition hover:border-white hover:bg-white hover:text-black`}
         >
