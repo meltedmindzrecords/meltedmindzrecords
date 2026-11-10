@@ -2,7 +2,7 @@
 
 @theme inline {
   --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-display-face), "Arial Narrow", Impact, sans-serif;
+  --font-display: var(--font-display-face), "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
 }
 
 :root {
@@ -26,13 +26,23 @@ body {
   color: #000;
 }
 
-/* Huge condensed display type (artist names, page titles). */
+/* Big, tall, condensed uppercase type (Atlantic style): artist names, titles. */
 .display {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 640;
+  font-variation-settings: "wdth" 32, "YTUC" 760, "opsz" 144;
   text-transform: uppercase;
-  line-height: 0.88;
-  letter-spacing: -0.005em;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+}
+
+/* Same face, lighter and wider: nav, captions, buttons. */
+.caps {
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-variation-settings: "wdth" 80, "opsz" 14;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 /* Small uppercase labels ("New Single", "Artists"). */
@@ -41,6 +51,14 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.28em;
+}
+
+/* Hide horizontal scrollbars on swipe rows. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 :focus-visible {
