@@ -60,14 +60,6 @@ const noLinks = {
 
 export const fallbackArtists: Artist[] = [
   {
-    slug: "yxng-dreezy",
-    name: "Yxng Dreezy",
-    genre: "Melodic Rap / Hip-Hop",
-    image: "/artists/yxng-dreezy.jpg",
-    bio: "Yxng Dreezy is a melodic rap artist bringing emotional storytelling, memorable melodies, and a modern approach to hip-hop.",
-    ...noLinks,
-  },
-  {
     slug: "lil-rappy",
     name: "Lil Rappy",
     genre: "Melodic Rap / Hip-Hop",

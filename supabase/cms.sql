@@ -117,9 +117,6 @@ on conflict (id) do nothing;
 
 -- SEED ROWS (current site content) ---------------------------------
 insert into public.artists (slug, name, genre, bio, image_url, sort_order) values
-  ('yxng-dreezy', 'Yxng Dreezy', 'Melodic Rap / Hip-Hop',
-   'Yxng Dreezy is a melodic rap artist bringing emotional storytelling, memorable melodies, and a modern approach to hip-hop.',
-   '/artists/yxng-dreezy.jpg', 10),
   ('lil-rappy', 'Lil Rappy', 'Melodic Rap / Hip-Hop',
    'Lil Rappy delivers melodic energy, creative songwriting, and a unique voice within modern hip-hop.',
    '/artists/lil-rappy.jpg', 20),
