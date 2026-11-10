@@ -187,6 +187,22 @@ function str(v: unknown, fallback = ""): string {
   return typeof v === "string" && v.trim() !== "" ? v.trim() : fallback;
 }
 
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+/** "2026-04-24" (or an ISO timestamp) -> "April 24, 2026". Anything else is shown as typed. */
+export function formatReleaseDate(v: unknown): string {
+  const raw = str(v);
+  const m = /^(\d{4})-(\d{2})-(\d{2})(?:[T ].*)?$/.exec(raw);
+  if (!m) return raw;
+  const month = MONTHS[Number(m[2]) - 1];
+  const day = Number(m[3]);
+  if (!month || day < 1 || day > 31) return raw;
+  return `${month} ${day}, ${m[1]}`;
+}
+
 function opt(v: unknown): string | null {
   return typeof v === "string" && v.trim() !== "" ? v.trim() : null;
 }
@@ -252,7 +268,7 @@ export async function getReleases(): Promise<Release[]> {
         title,
         artist: str(r.artist),
         type: str(r.type, "Single"),
-        releaseDate: str(r.release_date),
+        releaseDate: formatReleaseDate(r.release_date),
         cover: str(r.cover_url, "/logo/Melted.Mindz.Records-Logo.jpg"),
         description,
         shortDescription: str(r.short_description, description),
