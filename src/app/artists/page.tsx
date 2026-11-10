@@ -1,41 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 
-type Artist = {
-  name: string;
-  slug: string;
-  image: string;
-};
+import { getArtists, isOptimizable } from "@/lib/content";
 
-const artists: Artist[] = [
-  {
-    name: "Everstatic",
-    slug: "everstatic",
-    image: "/artists/everstatic.jpg",
-  },
-  {
-    name: "Lil Rappy",
-    slug: "lil-rappy",
-    image: "/artists/lil-rappy.jpg",
-  },
-  {
-    name: "Okay Boomhauer",
-    slug: "okay-boomhauer",
-    image: "/artists/okay-boomhauer.jpg",
-  },
-  {
-    name: "Rachel Ann",
-    slug: "rachel-ann",
-    image: "/artists/rachel-ann.jpg",
-  },
-  {
-    name: "Yxng Dreezy",
-    slug: "yxng-dreezy",
-    image: "/artists/yxng-dreezy.jpg",
-  },
-];
+// Content is edited in Supabase; refresh at most once a minute.
+export const revalidate = 60;
 
-export default function ArtistsPage() {
+export default async function ArtistsPage() {
+  const artists = await getArtists();
   const sortedArtists = [...artists].sort((a, b) =>
     a.name.localeCompare(b.name)
   );
@@ -81,6 +53,7 @@ export default function ArtistsPage() {
                   src={artist.image}
                   alt={artist.name}
                   fill
+                  unoptimized={!isOptimizable(artist.image)}
                   sizes="
                     (max-width: 640px) 50vw,
                     (max-width: 768px) 33vw,

@@ -1,24 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const executives = [
-{
-name: "Theodore Pirkle",
-title: "Founder & CEO",
-image: "/executives/theodore-pirkle.jpg",
-bio:
-"Founder and CEO of Melted Mindz Records, leading the label's vision, artist development, business strategy, and future growth.",
-},
-{
-name: "Alexandra Elizabeth",
-title: "Co-Founder & Head of A&R",
-image: "/executives/alexandra-elizabeth.jpg",
-bio:
-"Co-Founder and Head of A&R at Melted Mindz Records, focused on discovering talent, developing artists, creative direction, and supporting the long-term growth of the label's roster.",
-},
-];
+import { getTeam, initials, isOptimizable } from "@/lib/content";
 
-export default function AboutPage() {
+// Content is edited in Supabase; refresh at most once a minute.
+export const revalidate = 60;
+
+export default async function AboutPage() {
+const executives = await getTeam();
+
 return (
 <main className="min-h-screen bg-black text-white">
 
@@ -138,13 +128,22 @@ return (
 
             <div className="relative aspect-[4/5] bg-zinc-900">
 
-              <Image
-                src={executive.image}
-                alt={`${executive.name} - ${executive.title}`}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
+              {executive.image ? (
+                <Image
+                  src={executive.image}
+                  alt={`${executive.name} - ${executive.title}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  unoptimized={!isOptimizable(executive.image)}
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-7xl font-black text-zinc-700">
+                    {initials(executive.name)}
+                  </span>
+                </div>
+              )}
 
             </div>
 

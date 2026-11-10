@@ -1,41 +1,14 @@
 import Image from "next/image";
 
-const artists = {
-  "yxng-dreezy": {
-    name: "Yxng Dreezy",
-    genre: "Melodic Rap / Hip-Hop",
-    image: "/artists/yxng-dreezy.jpg",
-    bio: "Yxng Dreezy is a melodic rap artist bringing emotional storytelling, memorable melodies, and a modern approach to hip-hop.",
-  },
+import { getArtist, getArtists, isOptimizable } from "@/lib/content";
 
-  "lil-rappy": {
-    name: "Lil Rappy",
-    genre: "Melodic Rap / Hip-Hop",
-    image: "/artists/lil-rappy.jpg",
-    bio: "Lil Rappy delivers melodic energy, creative songwriting, and a unique voice within modern hip-hop.",
-  },
+// Content is edited in Supabase; refresh at most once a minute.
+export const revalidate = 60;
 
-  "rachel-ann": {
-    name: "Rachel Ann",
-    genre: "Alternative / Pop-Punk",
-    image: "/artists/rachel-ann.jpg",
-    bio: "Rachel Ann brings powerful emotion, alternative influences, and a distinctive sound to the Melted Mindz roster.",
-  },
-
-  "okay-boomhauer": {
-    name: "Okay Boomhauer",
-    genre: "Rock / Alternative (Band)",
-    image: "/artists/okay-boomhauer.jpg",
-    bio: "Okay Boomhauer delivers a rock-driven sound with alternative influences and a unique band identity.",
-  },
-
-  "everstatic": {
-    name: "Everstatic",
-    genre: "Alternative / Rock",
-    image: "/artists/everstatic.jpg",
-    bio: "Everstatic is an alternative rock artist bringing a distinctive sound, creative energy, and a modern approach to the Melted Mindz Records roster.",
-  },
-};
+export async function generateStaticParams() {
+  const artists = await getArtists();
+  return artists.map((a) => ({ artist: a.slug }));
+}
 
 export default async function ArtistProfile({
   params,
@@ -44,7 +17,7 @@ export default async function ArtistProfile({
 }) {
   const { artist } = await params;
 
-  const artistInfo = artists[artist as keyof typeof artists];
+  const artistInfo = await getArtist(artist);
 
   if (!artistInfo) {
     return (
@@ -70,6 +43,7 @@ export default async function ArtistProfile({
             height={1200}
             className="h-auto w-full object-contain"
             priority
+            unoptimized={!isOptimizable(artistInfo.image)}
           />
         </div>
 
@@ -122,17 +96,30 @@ export default async function ArtistProfile({
 
         <div className="mt-6 flex flex-wrap gap-4">
 
-          <button className="rounded-full bg-white px-6 py-3 font-semibold text-black">
-            Spotify
-          </button>
-
-          <button className="rounded-full bg-white px-6 py-3 font-semibold text-black">
-            Apple Music
-          </button>
-
-          <button className="rounded-full bg-white px-6 py-3 font-semibold text-black">
-            YouTube
-          </button>
+          {[
+            { label: "Spotify", href: artistInfo.spotifyUrl },
+            { label: "Apple Music", href: artistInfo.appleMusicUrl },
+            { label: "YouTube", href: artistInfo.youtubeUrl },
+          ].map(({ label, href }) =>
+            href ? (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full bg-white px-6 py-3 font-semibold text-black"
+              >
+                {label}
+              </a>
+            ) : (
+              <button
+                key={label}
+                className="rounded-full bg-white px-6 py-3 font-semibold text-black"
+              >
+                {label}
+              </button>
+            )
+          )}
 
         </div>
 
@@ -145,9 +132,30 @@ export default async function ArtistProfile({
           Follow
         </h2>
 
-        <p className="mt-4 text-zinc-400">
-          Social links and artist updates coming soon.
-        </p>
+        {artistInfo.instagramUrl || artistInfo.tiktokUrl ? (
+          <div className="mt-6 flex flex-wrap gap-4">
+            {[
+              { label: "Instagram", href: artistInfo.instagramUrl },
+              { label: "TikTok", href: artistInfo.tiktokUrl },
+            ]
+              .filter((l) => l.href)
+              .map(({ label, href }) => (
+                <a
+                  key={label}
+                  href={href!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-white px-6 py-3 font-semibold"
+                >
+                  {label}
+                </a>
+              ))}
+          </div>
+        ) : (
+          <p className="mt-4 text-zinc-400">
+            Social links and artist updates coming soon.
+          </p>
+        )}
 
       </section>
 
