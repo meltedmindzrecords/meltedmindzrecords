@@ -1,18 +1,16 @@
 import Image from "next/image";
 
-const releaseLink = "https://too.fm/stillwithme";
+import { getReleases, isOptimizable, pickFeatured } from "@/lib/content";
 
-const release = {
-  title: "Still With Me",
-  artist: "Lil Rappy",
-  cover: "/release%20covers/Still-With-Me.jpg",
-  type: "Single",
-  releaseDate: "July 28, 2026",
-  description:
-    "Still With Me is a heartfelt release exploring perseverance, loyalty, and growth. Released through Melted Mindz Records, the song showcases emotional lyricism paired with cinematic production.",
-};
+// Content is edited in Supabase; refresh at most once a minute.
+export const revalidate = 60;
 
-export default function ReleasesPage() {
+export default async function ReleasesPage() {
+  const releases = await getReleases();
+  const release = pickFeatured(releases);
+  const otherReleases = releases.filter((r) => r !== release);
+  const releaseLink = release.link ?? "#";
+
   return (
     <main className="min-h-screen bg-black text-white">
 
@@ -62,6 +60,7 @@ export default function ReleasesPage() {
               alt={`${release.title} cover`}
               fill
               className="object-cover"
+              unoptimized={!isOptimizable(release.cover)}
             />
 
           </div>
@@ -105,7 +104,7 @@ export default function ReleasesPage() {
 
 
               <a
-                href={releaseLink}
+                href={release.spotifyUrl ?? releaseLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full bg-green-500 px-6 py-3 font-semibold text-black transition hover:scale-105"
@@ -116,7 +115,7 @@ export default function ReleasesPage() {
 
 
               <a
-                href={releaseLink}
+                href={release.appleMusicUrl ?? releaseLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full bg-white px-6 py-3 font-semibold text-black transition hover:scale-105"
@@ -127,7 +126,7 @@ export default function ReleasesPage() {
 
 
               <a
-                href={releaseLink}
+                href={release.youtubeUrl ?? releaseLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full bg-red-600 px-6 py-3 font-semibold transition hover:scale-105"
@@ -178,10 +177,8 @@ export default function ReleasesPage() {
 
 
           <p className="mt-6 max-w-3xl leading-8 text-zinc-400">
-            Melted Mindz Records presents "Still With Me" by Lil Rappy.
-            The release delivers melodic storytelling, emotional depth,
-            and a unique sound that represents the next generation of
-            independent music.
+            {release.about ||
+              `Melted Mindz Records presents "${release.title}" by ${release.artist}.`}
           </p>
 
 
@@ -190,6 +187,59 @@ export default function ReleasesPage() {
       </section>
 
 
+
+
+
+      {/* MORE RELEASES (only shows when there is more than one release) */}
+
+      {otherReleases.length > 0 && (
+        <section className="mx-auto max-w-7xl px-6 py-20">
+          <h2 className="mb-10 text-4xl font-bold">More Releases</h2>
+
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4">
+            {otherReleases.map((r) => {
+              const href = r.link ?? r.spotifyUrl ?? r.appleMusicUrl ?? r.youtubeUrl;
+              const card = (
+                <>
+                  <div className="relative aspect-square overflow-hidden rounded-3xl border border-zinc-800">
+                    <Image
+                      src={r.cover}
+                      alt={`${r.title} cover`}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      unoptimized={!isOptimizable(r.cover)}
+                    />
+                  </div>
+                  <p className="mt-4 text-xs uppercase tracking-[0.3em] text-red-500">
+                    {r.type}
+                  </p>
+                  <h3 className="mt-2 text-xl font-bold">{r.title}</h3>
+                  <p className="text-zinc-400">{r.artist}</p>
+                  {r.releaseDate && (
+                    <p className="mt-1 text-sm text-zinc-500">{r.releaseDate}</p>
+                  )}
+                </>
+              );
+              return href ? (
+                <a
+                  key={r.slug}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block"
+                >
+                  {card}
+                </a>
+              ) : (
+                <div key={r.slug} className="group block">
+                  {card}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
 
 

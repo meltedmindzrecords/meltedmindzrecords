@@ -1,40 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const artists = [
-  {
-    name: "Yxng Dreezy",
-    genre: "Melodic Rap / Hip-Hop",
-    image: "/artists/yxng-dreezy.jpg",
-    slug: "yxng-dreezy",
-  },
-  {
-    name: "Lil Rappy",
-    genre: "Melodic Rap / Hip-Hop",
-    image: "/artists/lil-rappy.jpg",
-    slug: "lil-rappy",
-  },
-  {
-    name: "Rachel Ann",
-    genre: "Alternative / Pop-Punk",
-    image: "/artists/rachel-ann.jpg",
-    slug: "rachel-ann",
-  },
-  {
-    name: "Okay Boomhauer",
-    genre: "Rock / Alternative",
-    image: "/artists/okay-boomhauer.jpg",
-    slug: "okay-boomhauer",
-  },
-  {
-    name: "Everstatic",
-    genre: "Alternative / Rock",
-    image: "/artists/everstatic.jpg",
-    slug: "everstatic",
-  },
-];
+import { getArtists, getReleases, isOptimizable, pickFeatured } from "@/lib/content";
 
-export default function Home() {
+// Content is edited in Supabase; refresh at most once a minute.
+export const revalidate = 60;
+
+export default async function Home() {
+  const [artists, releases] = await Promise.all([getArtists(), getReleases()]);
+  const featured = pickFeatured(releases);
+
   return (
     <main className="min-h-screen bg-black text-white">
 
@@ -112,10 +87,11 @@ export default function Home() {
           <div className="relative aspect-square overflow-hidden rounded-3xl border border-red-900">
 
             <Image
-              src="/release%20covers/Still-With-Me.jpg"
-              alt="Still With Me - Lil Rappy"
+              src={featured.cover}
+              alt={`${featured.title} - ${featured.artist}`}
               fill
               className="object-cover"
+              unoptimized={!isOptimizable(featured.cover)}
             />
 
           </div>
@@ -127,20 +103,19 @@ export default function Home() {
             </p>
 
             <h3 className="mt-4 text-5xl font-bold">
-              Still With Me
+              {featured.title}
             </h3>
 
             <p className="mt-3 text-2xl text-red-200">
-              Lil Rappy
+              {featured.artist}
             </p>
 
             <p className="mt-8 leading-8 text-red-100/80">
-              An emotional release exploring loyalty, perseverance,
-              and personal growth through melodic storytelling.
+              {featured.shortDescription}
             </p>
 
             <a
-              href="https://too.fm/stillwithme"
+              href={featured.link ?? featured.spotifyUrl ?? "/releases"}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-8 inline-block rounded-full bg-red-600 px-8 py-3 font-bold"
@@ -179,6 +154,7 @@ export default function Home() {
                   alt={artist.name}
                   fill
                   className="object-cover"
+                  unoptimized={!isOptimizable(artist.image)}
                 />
 
               </div>
@@ -210,7 +186,7 @@ export default function Home() {
         <div className="grid gap-10 text-center md:grid-cols-4">
 
           <div>
-            <h3 className="text-5xl font-black">5+</h3>
+            <h3 className="text-5xl font-black">{artists.length}+</h3>
             <p>Artists</p>
           </div>
 

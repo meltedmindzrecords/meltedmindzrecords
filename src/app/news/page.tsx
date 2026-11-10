@@ -23,16 +23,6 @@ const pressReleases = [
   },
 
   {
-    title: "The Pulse of the Streets: Welcoming Yxng Dreezy",
-    date: "Mar 29, 2026",
-    category: "Press Release",
-    description:
-      "Melted Mindz Records welcomes Yxng Dreezy and introduces his sound, vision, and creative journey as part of the next generation of artists.",
-    link:
-      "https://meltedmindzrecords.substack.com/p/the-pulse-of-the-streets-welcoming",
-  },
-
-  {
     title: "From The Swamp To The World: Okay Boomhauer",
     date: "Jul 8, 2026",
     category: "Press Release",
