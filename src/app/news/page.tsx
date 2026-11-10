@@ -1,4 +1,9 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "News",
+  description: "Press releases and announcements from Melted Mindz Records.",
+};
 
 const pressReleases = [
   {
@@ -45,223 +50,58 @@ const pressReleases = [
 
 
 export default function NewsPage() {
+  const [lead, ...rest] = pressReleases;
+
   return (
-    <main className="min-h-screen bg-black text-white">
-
-      {/* HERO */}
-
-      <section className="flex min-h-[60vh] items-center justify-center bg-gradient-to-b from-zinc-900 to-black px-6">
-
-        <div className="text-center">
-
-          <p className="uppercase tracking-[0.5em] text-red-500">
-            Melted Mindz Records
-          </p>
-
-          <h1 className="mt-6 text-6xl font-black sm:text-8xl">
-            News
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-3xl text-lg text-zinc-400">
-            Official press releases, label announcements, artist updates,
-            and stories from Melted Mindz Records.
-          </p>
-
-        </div>
-
-      </section>
-
-
-
-
-
-      {/* FEATURED PRESS RELEASE */}
-
-      <section className="mx-auto max-w-7xl px-6 py-24">
-
-        <h2 className="text-5xl font-black">
-          Featured Press Release
-        </h2>
-
-
-        <div className="mt-12 rounded-3xl border border-zinc-800 bg-zinc-950 p-10">
-
-
-          <p className="uppercase tracking-widest text-red-500">
-            {pressReleases[0].category}
-          </p>
-
-
-          <h3 className="mt-5 text-4xl font-bold">
-            {pressReleases[0].title}
-          </h3>
-
-
-          <p className="mt-4 text-zinc-500">
-            {pressReleases[0].date}
-          </p>
-
-
-          <p className="mt-6 max-w-3xl leading-8 text-zinc-400">
-            {pressReleases[0].description}
-          </p>
-
-
-          <a
-            href={pressReleases[0].link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              mt-8
-              inline-flex
-              rounded-full
-              bg-red-600
-              px-8
-              py-3
-              font-bold
-              hover:bg-red-500
-            "
-          >
-            Read Press Release
-          </a>
-
-
-        </div>
-
-
-      </section>
-
-
-
-
-
-      {/* PRESS ARCHIVE */}
-
-      <section className="bg-zinc-950 px-6 py-24">
-
-        <div className="mx-auto max-w-7xl">
-
-          <h2 className="text-5xl font-black">
-            Press Archive
-          </h2>
-
-
-          <p className="mt-4 text-zinc-400">
-            Explore official Melted Mindz Records announcements and press releases.
-          </p>
-
-
-          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-
-
-            {pressReleases.map((release) => (
-
-              <article
-                key={release.title}
-                className="
-                  rounded-3xl
-                  border
-                  border-zinc-800
-                  bg-black
-                  p-8
-                  transition
-                  hover:border-red-600
-                "
-              >
-
-                <p className="text-sm uppercase tracking-widest text-red-500">
-                  {release.category}
-                </p>
-
-
-                <h3 className="mt-4 text-2xl font-bold">
-                  {release.title}
-                </h3>
-
-
-                <p className="mt-3 text-sm text-zinc-500">
-                  {release.date}
-                </p>
-
-
-                <p className="mt-5 leading-7 text-zinc-400">
-                  {release.description}
-                </p>
-
-
-                <a
-                  href={release.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="
-                    mt-6
-                    inline-block
-                    rounded-full
-                    border
-                    border-white
-                    px-6
-                    py-2
-                    font-semibold
-                    hover:bg-white
-                    hover:text-black
-                  "
-                >
-                  Read Release →
-                </a>
-
-
-              </article>
-
-            ))}
-
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-
-
-
-      {/* SUBSCRIBE */}
-
-      <section className="px-6 py-24 text-center">
-
-        <h2 className="text-5xl font-black">
-          Stay Connected
-        </h2>
-
-
-        <p className="mx-auto mt-6 max-w-2xl text-zinc-400">
-          Subscribe to Melted Mindz Records for official announcements,
-          artist news, and exclusive updates.
-        </p>
-
-
+    <div className="mx-auto max-w-[1440px] px-5 pb-24 pt-28 sm:px-8 sm:pt-36">
+      <p className="eyebrow text-white/50">Melted Mindz Records</p>
+      <h1 className="display mt-4 text-[22vw] sm:text-[11rem]">News</h1>
+
+      {lead && (
         <a
-          href="https://meltedmindzrecords.substack.com/"
+          href={lead.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="
-            mt-10
-            inline-block
-            rounded-full
-            bg-red-600
-            px-10
-            py-4
-            font-bold
-            hover:bg-red-500
-          "
+          className="group mt-14 block border-t border-white pt-8"
         >
-          Subscribe To Press
+          <p className="eyebrow text-white/50">
+            {lead.category} · {lead.date}
+          </p>
+          <h2 className="mt-5 max-w-5xl text-4xl font-semibold leading-[1.1] tracking-tight group-hover:underline sm:text-6xl">
+            {lead.title}
+          </h2>
+          <p className="mt-6 max-w-2xl text-[17px] leading-8 text-white/60">{lead.description}</p>
+          <span className="mt-8 inline-block text-[12px] font-semibold uppercase tracking-[0.2em]">
+            Read the release →
+          </span>
         </a>
+      )}
 
-
-      </section>
-
-
-    </main>
+      {rest.length > 0 && (
+        <ul className="mt-20 border-t border-white/10">
+          {rest.map((item) => (
+            <li key={item.title} className="border-b border-white/10">
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group grid gap-3 py-8 lg:grid-cols-12 lg:gap-8"
+              >
+                <p className="eyebrow text-white/50 lg:col-span-3">
+                  {item.category} · {item.date}
+                </p>
+                <div className="lg:col-span-8">
+                  <h3 className="text-2xl font-semibold leading-snug tracking-tight group-hover:underline sm:text-3xl">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-[15px] leading-7 text-white/60">{item.description}</p>
+                </div>
+                <span className="hidden text-right text-xl lg:col-span-1 lg:block">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

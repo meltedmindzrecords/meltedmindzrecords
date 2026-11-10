@@ -1,210 +1,155 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
 import { getTeam, initials, isOptimizable } from "@/lib/content";
+import { CONTACT_EMAIL, GET_SIGNED_URL } from "@/lib/site";
 
 // Content is edited in Supabase; refresh at most once a minute.
 export const revalidate = 60;
 
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Melted Mindz Records is an independent distribution label from Birmingham, Alabama, founded in 2024. Artists keep their rights.",
+};
+
+const facts = [
+  { label: "Founded", value: "2024" },
+  { label: "Based in", value: "Birmingham, Alabama" },
+  { label: "Model", value: "Independent distribution. Artists keep their rights." },
+];
+
 export default async function AboutPage() {
-const executives = await getTeam();
+  const team = await getTeam();
 
-return (
-<main className="min-h-screen bg-black text-white">
-
-  {/* HERO */}
-
-  <section className="flex min-h-[60vh] items-center justify-center bg-gradient-to-b from-zinc-900 to-black px-6">
-
-    <div className="text-center">
-
-      <p className="uppercase tracking-[0.5em] text-red-500">
-        Melted Mindz Records
-      </p>
-
-      <h1 className="mt-6 text-6xl font-black sm:text-8xl">
-        About Us
-      </h1>
-
-      <p className="mx-auto mt-6 max-w-3xl text-lg text-zinc-400">
-        Building the next generation of artists through creativity,
-        innovation, and culture.
-      </p>
-
-    </div>
-
-  </section>
-
-  {/* ABOUT LABEL */}
-
-  <section className="mx-auto max-w-7xl px-6 py-24">
-
-    <div className="grid gap-12 lg:grid-cols-2">
-
-      <div>
-
-        <h2 className="text-5xl font-black">
-          About Melted Mindz Records
-        </h2>
-
-        <p className="mt-8 leading-8 text-zinc-300">
-          Melted Mindz Records is an independent record label dedicated
-          to developing artists, creating opportunities, and pushing
-          creative boundaries across multiple genres.
+  return (
+    <>
+      {/* INTRO */}
+      <section className="mx-auto max-w-[1440px] px-5 pb-20 pt-28 sm:px-8 sm:pt-36 lg:pb-28">
+        <p className="eyebrow text-white/50">About</p>
+        <h1 className="display mt-4 text-[17vw] sm:text-[9rem]">Melted Mindz Records</h1>
+        <p className="mt-10 max-w-4xl text-2xl font-medium leading-[1.35] tracking-tight text-white/90 sm:text-4xl">
+          Melted Mindz Records is an independent record label dedicated to developing artists,
+          creating opportunities, and pushing creative boundaries across multiple genres.
         </p>
+      </section>
 
-        <p className="mt-6 leading-8 text-zinc-300">
-          Founded with a vision to support the next generation of
-          musicians, Melted Mindz Records focuses on artist development,
-          music releases, branding, creative direction, and long-term
-          careers.
-        </p>
-
-        <p className="mt-6 leading-8 text-zinc-300">
-          From emerging talent to established creators, the label works
-          to provide the resources, support, and platform artists need
-          to bring their vision to the world.
-        </p>
-
-      </div>
-
-      <div className="rounded-3xl border border-zinc-800 bg-zinc-950 p-10">
-
-        <h3 className="text-3xl font-bold">
-          Our Mission
-        </h3>
-
-        <p className="mt-6 leading-8 text-zinc-400">
-          To amplify unique voices, develop meaningful artists,
-          and create a global community built around music and
-          creativity.
-        </p>
-
-        <h3 className="mt-10 text-3xl font-bold">
-          Our Vision
-        </h3>
-
-        <p className="mt-6 leading-8 text-zinc-400">
-          To become a leading independent entertainment company
-          known for artist-first development and innovative
-          approaches to the music industry.
-        </p>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  {/* EXECUTIVES */}
-
-  <section className="bg-zinc-950 px-6 py-24">
-
-    <div className="mx-auto max-w-7xl">
-
-      <h2 className="text-5xl font-black">
-        Executive Team
-      </h2>
-
-      <p className="mt-4 max-w-3xl text-zinc-400">
-        Meet the leadership team responsible for guiding Melted Mindz
-        Records and supporting our artists.
-      </p>
-
-      <div className="mt-12 grid gap-8 md:grid-cols-2">
-
-        {executives.map((executive) => (
-
-          <div
-            key={executive.name}
-            className="
-              overflow-hidden
-              rounded-3xl
-              border
-              border-zinc-800
-              bg-black
-            "
-          >
-
-            <div className="relative aspect-[4/5] bg-zinc-900">
-
-              {executive.image ? (
-                <Image
-                  src={executive.image}
-                  alt={`${executive.name} - ${executive.title}`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover"
-                  unoptimized={!isOptimizable(executive.image)}
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-7xl font-black text-zinc-700">
-                    {initials(executive.name)}
-                  </span>
-                </div>
-              )}
-
+      {/* FACTS */}
+      <section className="border-y border-white/10">
+        <dl className="mx-auto grid max-w-[1440px] sm:grid-cols-3">
+          {facts.map((f, i) => (
+            <div
+              key={f.label}
+              className={`px-5 py-8 sm:px-8 sm:py-12 ${i > 0 ? "border-t border-white/10 sm:border-l sm:border-t-0" : ""}`}
+            >
+              <dt className="eyebrow text-white/50">{f.label}</dt>
+              <dd className="mt-3 text-lg font-medium leading-snug">{f.value}</dd>
             </div>
+          ))}
+        </dl>
+      </section>
 
-            <div className="p-8">
-
-              <h3 className="text-3xl font-bold">
-                {executive.name}
-              </h3>
-
-              <p className="mt-2 text-red-500">
-                {executive.title}
-              </p>
-
-              <p className="mt-5 leading-7 text-zinc-400">
-                {executive.bio}
-              </p>
-
-            </div>
-
+      {/* STORY + MISSION */}
+      <section className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 lg:py-28">
+        <div className="grid gap-14 lg:grid-cols-12">
+          <div className="space-y-6 text-[17px] leading-8 text-white/70 lg:col-span-6">
+            <p>
+              Founded with a vision to support the next generation of musicians, Melted Mindz
+              Records focuses on artist development, music releases, branding, creative
+              direction, and long-term careers.
+            </p>
+            <p>
+              From emerging talent to established creators, the label works to provide the
+              resources, support, and platform artists need to bring their vision to the world.
+            </p>
           </div>
+          <div className="space-y-12 lg:col-span-5 lg:col-start-8">
+            <div>
+              <p className="eyebrow text-white/50">Mission</p>
+              <p className="mt-4 text-xl leading-snug">
+                To amplify unique voices, develop meaningful artists, and create a global
+                community built around music and creativity.
+              </p>
+            </div>
+            <div>
+              <p className="eyebrow text-white/50">Vision</p>
+              <p className="mt-4 text-xl leading-snug">
+                To become a leading independent entertainment company known for artist-first
+                development and innovative approaches to the music industry.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        ))}
+      {/* TEAM (Columbia: short, clean) */}
+      {team.length > 0 && (
+        <section className="border-t border-white/10">
+          <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 lg:py-28">
+            <h2 className="display text-6xl sm:text-8xl">Leadership</h2>
+            <ul className="mt-12 grid gap-px bg-white/10 sm:grid-cols-2">
+              {team.map((m) => (
+                <li key={m.name} className="flex gap-5 bg-black py-8 sm:p-8">
+                  <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-zinc-900 sm:h-24 sm:w-24">
+                    {m.image ? (
+                      <Image
+                        src={m.image}
+                        alt={m.name}
+                        fill
+                        sizes="96px"
+                        className="object-cover grayscale"
+                        unoptimized={!isOptimizable(m.image)}
+                      />
+                    ) : (
+                      <span className="display absolute inset-0 flex items-center justify-center text-3xl text-white/50">
+                        {initials(m.name)}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold">{m.name}</h3>
+                    {m.title && (
+                      <p className="mt-1 text-[11px] uppercase leading-relaxed tracking-[0.2em] text-white/60">
+                        {m.title}
+                      </p>
+                    )}
+                    {m.bio && <p className="mt-4 text-[15px] leading-7 text-white/60">{m.bio}</p>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
-      </div>
-
-    </div>
-
-  </section>
-
-  {/* CTA */}
-
-  <section className="px-6 py-24 text-center">
-
-    <h2 className="text-5xl font-black">
-      Join The Movement
-    </h2>
-
-    <p className="mx-auto mt-6 max-w-2xl text-zinc-400">
-      Discover our artists, explore releases, and follow the future
-      of Melted Mindz Records.
-    </p>
-
-    <Link
-      href="/artists"
-      className="
-        mt-10
-        inline-block
-        rounded-full
-        bg-red-600
-        px-10
-        py-4
-        font-bold
-        hover:bg-red-500
-      "
-    >
-      Explore Artists
-    </Link>
-
-  </section>
-
-</main>
-
-);
+      {/* CTA */}
+      <section className="border-t border-white/10">
+        <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 lg:py-28">
+          <p className="max-w-3xl text-3xl font-medium leading-tight tracking-tight sm:text-5xl">
+            Making music? We want to hear it.
+          </p>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <a
+              href={GET_SIGNED_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white px-7 py-4 text-[13px] font-semibold uppercase tracking-[0.2em] text-black transition hover:bg-zinc-200"
+            >
+              Get signed
+            </a>
+            <Link
+              href="/contact"
+              className="border border-white/50 px-7 py-4 text-[13px] font-semibold uppercase tracking-[0.2em] transition hover:border-white hover:bg-white hover:text-black"
+            >
+              Contact
+            </Link>
+          </div>
+          <a href={`mailto:${CONTACT_EMAIL}`} className="mt-8 block text-sm text-white/50 hover:text-white">
+            {CONTACT_EMAIL}
+          </a>
+        </div>
+      </section>
+    </>
+  );
 }

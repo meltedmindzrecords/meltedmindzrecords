@@ -65,7 +65,11 @@ export const fallbackArtists: Artist[] = [
     genre: "Melodic Rap / Hip-Hop",
     image: "/artists/lil-rappy.jpg",
     bio: "Lil Rappy delivers melodic energy, creative songwriting, and a unique voice within modern hip-hop.",
-    ...noLinks,
+    spotifyUrl: "https://open.spotify.com/artist/6thRj8cKZfWpkslddej5qx",
+    appleMusicUrl: "https://music.apple.com/us/artist/lil-rappy/1715891963",
+    youtubeUrl: "https://www.youtube.com/@theofficiallilrappy",
+    instagramUrl: "https://www.instagram.com/lil_rappy_official/",
+    tiktokUrl: "https://www.tiktok.com/@lilrappy",
   },
   {
     slug: "rachel-ann",
@@ -81,7 +85,11 @@ export const fallbackArtists: Artist[] = [
     genre: "Rock / Alternative (Band)",
     image: "/artists/okay-boomhauer.jpg",
     bio: "Okay Boomhauer delivers a rock-driven sound with alternative influences and a unique band identity.",
-    ...noLinks,
+    spotifyUrl: "https://open.spotify.com/artist/799cPO1eCIgjzX6qvHtXxT",
+    appleMusicUrl: "https://music.apple.com/us/artist/okay-boomhauer/1587341062",
+    youtubeUrl: "https://www.youtube.com/@okayboomhauer",
+    instagramUrl: "https://www.instagram.com/okayboomhauer/",
+    tiktokUrl: "https://www.tiktok.com/@okayboomhauer",
   },
   {
     slug: "everstatic",
@@ -89,7 +97,11 @@ export const fallbackArtists: Artist[] = [
     genre: "Alternative / Rock",
     image: "/artists/everstatic.jpg",
     bio: "Everstatic is an alternative rock artist bringing a distinctive sound, creative energy, and a modern approach to the Melted Mindz Records roster.",
-    ...noLinks,
+    spotifyUrl: "https://open.spotify.com/artist/5lfGHhWeePLymISzdE3CGL",
+    appleMusicUrl: "https://music.apple.com/us/artist/everstatic/6828028984",
+    youtubeUrl: "https://www.youtube.com/@everstatic-official",
+    instagramUrl: "https://www.instagram.com/everstatic.official/",
+    tiktokUrl: "https://www.tiktok.com/@everstatic.official",
   },
 ];
 
@@ -281,4 +293,28 @@ export function initials(name: string): string {
     .slice(0, 2)
     .map((w) => w[0]!.toUpperCase())
     .join("");
+}
+
+
+function sameName(a: string, b: string): boolean {
+  return a.trim().toLowerCase() === b.trim().toLowerCase();
+}
+
+/** Releases credited to an artist (matches the release's `artist` text to the artist's name). */
+export function releasesFor(artist: Artist, releases: Release[]): Release[] {
+  return releases.filter((r) =>
+    r.artist
+      .split(/,|&| x | feat\.? | ft\.? /i)
+      .some((part) => sameName(part, artist.name))
+  );
+}
+
+/** The roster artist a release belongs to, if any. */
+export function artistFor(release: Release, artists: Artist[]): Artist | null {
+  return artists.find((a) => releasesFor(a, [release]).length > 0) ?? null;
+}
+
+/** First available listen link for a release. */
+export function listenLink(release: Release): string | null {
+  return release.link ?? release.spotifyUrl ?? release.appleMusicUrl ?? release.youtubeUrl;
 }

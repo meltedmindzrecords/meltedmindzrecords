@@ -1,136 +1,31 @@
-import Image from "next/image";
-import Link from "next/link";
+import type { Metadata } from "next";
 
-import { getArtists, isOptimizable } from "@/lib/content";
+import ArtistCard from "@/components/ArtistCard";
+import { getArtists } from "@/lib/content";
 
 // Content is edited in Supabase; refresh at most once a minute.
 export const revalidate = 60;
 
+export const metadata: Metadata = {
+  title: "Artists",
+  description: "The Melted Mindz Records roster.",
+};
+
 export default async function ArtistsPage() {
   const artists = await getArtists();
-  const sortedArtists = [...artists].sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
+  const sortedArtists = [...artists].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <div className="mx-auto max-w-[1440px] px-5 pb-24 pt-28 sm:px-8 sm:pt-36">
+      <p className="eyebrow text-white/50">Melted Mindz Records</p>
+      <h1 className="display mt-4 text-[22vw] sm:text-[11rem]">Artists</h1>
 
-      {/* PAGE HEADER */}
-      <section className="mx-auto max-w-7xl px-6 pb-12 pt-24 md:px-10 md:pb-16 md:pt-32">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">
-          Melted Mindz Records
-        </p>
+      <div className="mt-10 grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
+        {sortedArtists.map((artist, i) => (
+          <ArtistCard key={artist.slug} artist={artist} priority={i < 4} />
+        ))}
+      </div>
 
-        <h1 className="mt-4 text-6xl font-black uppercase tracking-tight md:text-8xl">
-          Artists
-        </h1>
-      </section>
-
-      {/* ARTIST GRID */}
-      <section className="mx-auto max-w-7xl px-6 pb-24 md:px-10 md:pb-32">
-        <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {sortedArtists.map((artist) => (
-            <Link
-              key={artist.slug}
-              href={`/artists/${artist.slug}`}
-              className="group block"
-            >
-              {/* ARTIST CARD */}
-              <div
-                className="
-                  relative
-                  aspect-square
-                  overflow-hidden
-                  bg-zinc-900
-                  transition-transform
-                  duration-500
-                  ease-out
-                  group-hover:-rotate-3
-                "
-              >
-                {/* ARTIST IMAGE */}
-                <Image
-                  src={artist.image}
-                  alt={artist.name}
-                  fill
-                  unoptimized={!isOptimizable(artist.image)}
-                  sizes="
-                    (max-width: 640px) 50vw,
-                    (max-width: 768px) 33vw,
-                    (max-width: 1024px) 25vw,
-                    20vw
-                  "
-                  className="
-                    object-cover
-                    transition-transform
-                    duration-700
-                    ease-out
-                    group-hover:scale-105
-                  "
-                />
-
-                {/* DARK OVERLAY */}
-                <div
-                  className="
-                    absolute
-                    inset-0
-                    bg-black/35
-                    transition-opacity
-                    duration-500
-                    group-hover:bg-black/20
-                  "
-                />
-
-                {/* CENTERED ARTIST NAME */}
-                <div className="absolute inset-0 flex items-center justify-center overflow-hidden px-4">
-                  <h2
-                    className="
-                      relative
-                      text-center
-                      text-lg
-                      font-black
-                      uppercase
-                      tracking-tight
-                      text-white
-                      transition-all
-                      duration-500
-                      ease-out
-                      group-hover:-translate-x-full
-                      group-hover:opacity-0
-                      sm:text-xl
-                      md:text-2xl
-                    "
-                  >
-                    {artist.name}
-
-                    {/* SHIMMER */}
-                    <span
-                      className="
-                        pointer-events-none
-                        absolute
-                        inset-y-0
-                        -left-full
-                        w-1/2
-                        skew-x-[-20deg]
-                        bg-gradient-to-r
-                        from-transparent
-                        via-white
-                        to-transparent
-                        opacity-0
-                        transition-all
-                        duration-700
-                        group-hover:left-[150%]
-                        group-hover:opacity-100
-                      "
-                    />
-                  </h2>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-    </main>
+    </div>
   );
 }

@@ -1,23 +1,33 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Anton, Inter_Tight } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const display = Anton({
+  variable: "--font-display-face",
+  weight: "400",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const body = Inter_Tight({
+  variable: "--font-body",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Melted Mindz Records",
-  description: "Official website of Melted Mindz Records.",
+  metadataBase: new URL("https://www.meltedmindzrecords.com"),
+  title: {
+    default: "Melted Mindz Records",
+    template: "%s | Melted Mindz Records",
+  },
+  description:
+    "Melted Mindz Records is an independent record label from Birmingham, Alabama. Artists keep their rights.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
@@ -28,7 +38,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${display.variable} ${body.variable} h-full antialiased`}
     >
       <head>
         <script
@@ -38,16 +48,12 @@ export default function RootLayout({
         />
       </head>
 
-      <body className="min-h-screen flex flex-col bg-black text-white">
-
+      <body className="flex min-h-screen flex-col bg-black text-white">
         <Navbar />
 
-        <main className="flex-1">
-          {children}
-        </main>
+        <main className="flex-1">{children}</main>
 
         <Footer />
-
       </body>
     </html>
   );
