@@ -4,13 +4,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import ArtistCard from "@/components/ArtistCard";
+import ReleaseCard from "@/components/ReleaseCard";
 import { SocialIcons, present } from "@/components/LinkButtons";
 import {
   getArtist,
   getArtists,
   getReleases,
   isOptimizable,
-  listenLink,
   releasesFor,
 } from "@/lib/content";
 
@@ -59,30 +59,28 @@ export default async function ArtistProfile({ params }: Props) {
 
   return (
     <>
-      {/* HERO: big photo, huge name (Atlantic) */}
-      <section className="relative flex h-[125vw] max-h-[92svh] min-h-[480px] items-end overflow-hidden bg-zinc-900 sm:h-[92svh]">
+      {/* HERO: full-bleed photo, name huge across the bottom (Atlantic) */}
+      <section className="relative flex h-[118vw] max-h-[94svh] min-h-[480px] items-end overflow-hidden bg-zinc-900 sm:h-[94svh]">
         <Image
           src={info.image}
           alt={info.name}
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[50%_15%] grayscale"
+          className="object-cover object-[50%_20%] grayscale"
           unoptimized={!isOptimizable(info.image)}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/40" />
-        <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 pb-10 sm:px-8 sm:pb-16">
-          {info.genre && <p className="eyebrow text-white/75">{info.genre}</p>}
-          <h1 className="display mt-4 break-words text-[19vw] sm:text-[13vw] lg:text-[12rem]">
-            {info.name}
-          </h1>
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/30" />
+        <div className="relative z-10 mx-auto w-full max-w-[1600px] px-5 pb-10 text-center sm:px-10 sm:pb-16">
+          <h1 className="display break-words text-[23vw] sm:text-[15vw] lg:text-[14rem]">{info.name}</h1>
+          {info.genre && <p className="caps mt-4 text-[12px] text-white/75 sm:text-[13px]">{info.genre}</p>}
         </div>
       </section>
 
-      {/* LISTEN + FOLLOW: one row of round icons */}
+      {/* LISTEN + FOLLOW: one centered row of small round icons */}
       {hasLinks && (
-        <section className="border-b border-white/10">
-          <div className="mx-auto max-w-[1440px] px-5 py-8 sm:px-8">
+        <section className="border-b border-white/15">
+          <div className="mx-auto flex max-w-[1600px] justify-center px-5 py-8 sm:px-10">
             <SocialIcons links={links} labelPrefix={info.name} />
           </div>
         </section>
@@ -90,52 +88,28 @@ export default async function ArtistProfile({ params }: Props) {
 
       {/* ABOUT */}
       {info.bio && (
-        <section className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 lg:py-28">
-          <div className="grid gap-8 lg:grid-cols-12">
-            <p className="eyebrow text-white/50 lg:col-span-3">About</p>
-            <p className="text-2xl font-medium leading-[1.4] tracking-tight text-white/90 sm:text-3xl lg:col-span-8">
-              {info.bio}
-            </p>
-          </div>
+        <section className="mx-auto max-w-[1600px] px-5 py-20 text-center sm:px-10 lg:py-28">
+          <p className="caps text-[13px] text-white/60">About</p>
+          <p className="mx-auto mt-6 max-w-3xl text-[22px] font-medium leading-[1.45] text-white/90 sm:text-3xl">
+            {info.bio}
+          </p>
         </section>
       )}
 
-      {/* RELEASES (only when this artist has any) */}
+      {/* MUSIC (only when this artist has any) */}
       {theirReleases.length > 0 && (
-        <section className="border-t border-white/10">
-          <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 lg:py-28">
-            <h2 className="display text-5xl sm:text-7xl">Music</h2>
-            <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
-              {theirReleases.map((r) => {
-                const href = listenLink(r);
-                const inner = (
-                  <>
-                    <div className="relative aspect-square overflow-hidden bg-zinc-900">
-                      <Image
-                        src={r.cover}
-                        alt={`${r.title} cover art`}
-                        fill
-                        sizes="(max-width: 640px) 50vw, 25vw"
-                        className="object-cover transition duration-500 group-hover:scale-[1.03]"
-                        unoptimized={!isOptimizable(r.cover)}
-                      />
-                    </div>
-                    <p className="mt-4 text-base font-semibold">{r.title}</p>
-                    <p className="mt-1 text-[11px] uppercase tracking-[0.2em] text-white/50">
-                      {[r.type, r.releaseDate].filter(Boolean).join(" · ")}
-                    </p>
-                  </>
-                );
-                return href ? (
-                  <a key={r.slug} href={href} target="_blank" rel="noopener noreferrer" className="group block">
-                    {inner}
-                  </a>
-                ) : (
-                  <div key={r.slug} className="group">
-                    {inner}
-                  </div>
-                );
-              })}
+        <section className="border-t border-white/15">
+          <div className="mx-auto max-w-[1600px] px-5 py-20 sm:px-10 lg:py-28">
+            <h2 className="display text-[3.6rem] sm:text-[5rem]">Music</h2>
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+              {theirReleases.map((r) => (
+                <ReleaseCard
+                  key={r.slug}
+                  release={r}
+                  showArtist={false}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                />
+              ))}
             </div>
           </div>
         </section>
@@ -143,21 +117,18 @@ export default async function ArtistProfile({ params }: Props) {
 
       {/* MORE ARTISTS */}
       {others.length > 0 && (
-        <section className="border-t border-white/10">
-          <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8">
+        <section className="border-t border-white/15">
+          <div className="mx-auto max-w-[1600px] px-5 py-20 sm:px-10">
             <div className="flex items-end justify-between gap-6">
-              <h2 className="display text-5xl sm:text-7xl">More artists</h2>
-              <Link
-                href="/artists"
-                className="pb-1 text-[12px] font-semibold uppercase tracking-[0.2em] text-white/60 hover:text-white"
-              >
-                All →
+              <h2 className="display text-[3.6rem] sm:text-[5rem]">More artists</h2>
+              <Link href="/artists" className="caps pb-2 text-[13px] text-white/60 hover:text-white">
+                View all
               </Link>
             </div>
-            <div className="-mx-5 mt-10 flex snap-x snap-mandatory gap-2 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:px-0 lg:grid-cols-4">
+            <div className="no-scrollbar -mx-5 mt-10 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-4">
               {others.slice(0, 4).map((a) => (
-                <div key={a.slug} className="w-[68vw] shrink-0 snap-start sm:w-auto">
-                  <ArtistCard artist={a} />
+                <div key={a.slug} className="w-[64vw] shrink-0 snap-start sm:w-auto">
+                  <ArtistCard artist={a} compact sizes="(max-width: 640px) 64vw, (max-width: 1024px) 33vw, 25vw" />
                 </div>
               ))}
             </div>

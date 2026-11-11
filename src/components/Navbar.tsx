@@ -8,6 +8,14 @@ import { useEffect, useState } from "react";
 import { ARTIST_TOOLS_URL, GET_SIGNED_URL, labelSocials } from "@/lib/site";
 import { LinkIcon } from "@/components/Icons";
 
+// Shown in the bar on desktop (Atlantic keeps the bar to a few words).
+const bar = [
+  { href: "/artists", label: "Artists" },
+  { href: "/releases", label: "Releases" },
+  { href: "/about", label: "About" },
+];
+
+// Everything, in the full-screen menu.
 const primary = [
   { href: "/artists", label: "Artists" },
   { href: "/releases", label: "Releases" },
@@ -22,14 +30,11 @@ const secondary = [
 ];
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-
-  // Close the menu on navigation.
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
+  // The menu remembers the page it was opened on, so it closes itself on navigation.
+  const [openOn, setOpenOn] = useState<string | null>(null);
+  const open = openOn === pathname;
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -52,12 +57,10 @@ export default function Navbar() {
     <>
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-          solid
-            ? "border-b border-white/10 bg-black/90 backdrop-blur-md"
-            : "border-b border-transparent bg-gradient-to-b from-black/70 to-transparent"
+          solid ? "bg-black" : "bg-gradient-to-b from-black/60 to-transparent"
         }`}
       >
-        <nav className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 sm:px-8">
+        <nav className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-5 sm:h-20 sm:px-10">
           <Link href="/" aria-label="Melted Mindz Records home" className="flex items-center gap-3">
             <Image
               src="/logo/Melted.Mindz.Records-Logo.jpg"
@@ -65,70 +68,63 @@ export default function Navbar() {
               width={150}
               height={150}
               priority
-              className="h-10 w-10 rounded-full object-cover"
+              className="h-10 w-10 rounded-full object-cover sm:h-11 sm:w-11"
             />
-            <span className="hidden text-[12px] font-semibold uppercase tracking-[0.3em] sm:block">
-              Melted Mindz Records
-            </span>
+            <span className="caps hidden text-[13px] tracking-[0.18em] sm:block">Melted Mindz Records</span>
           </Link>
 
-          <div className="hidden items-center gap-9 lg:flex">
-            {primary.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className={`text-[12px] font-medium uppercase tracking-[0.22em] transition hover:text-white ${
-                  isActive(l.href) ? "text-white" : "text-white/60"
-                }`}
-              >
-                {l.label}
-              </Link>
-            ))}
-            <a
-              href={GET_SIGNED_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-white px-5 py-2.5 text-[12px] font-semibold uppercase tracking-[0.2em] transition hover:bg-white hover:text-black"
-            >
-              Get Signed
-            </a>
-          </div>
+          <div className="flex items-center gap-8">
+            <div className="hidden items-center gap-8 lg:flex">
+              {bar.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={`caps text-[14px] transition hover:text-white ${
+                    isActive(l.href) ? "text-white" : "text-white/70"
+                  }`}
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
 
-          <button
-            onClick={() => setOpen((v) => !v)}
-            className="relative -mr-2 flex h-11 w-11 items-center justify-center lg:hidden"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-          >
-            <span
-              className={`absolute h-[1.5px] w-6 bg-white transition duration-300 ${
-                open ? "rotate-45" : "-translate-y-[5px]"
-              }`}
-            />
-            <span
-              className={`absolute h-[1.5px] w-6 bg-white transition duration-300 ${
-                open ? "-rotate-45" : "translate-y-[5px]"
-              }`}
-            />
-          </button>
+            <button
+              onClick={() => setOpenOn(open ? null : pathname)}
+              className="relative -mr-2 flex h-11 w-11 items-center justify-center"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+            >
+              <span
+                className={`absolute h-[2px] w-7 bg-white transition duration-300 ${
+                  open ? "rotate-45" : "-translate-y-[7px]"
+                }`}
+              />
+              <span className={`absolute h-[2px] w-7 bg-white transition duration-300 ${open ? "opacity-0" : ""}`} />
+              <span
+                className={`absolute h-[2px] w-7 bg-white transition duration-300 ${
+                  open ? "-rotate-45" : "translate-y-[7px]"
+                }`}
+              />
+            </button>
+          </div>
         </nav>
       </header>
 
-      {/* Mobile menu: full screen, big type */}
+      {/* Full-screen menu: centered, huge stacked type */}
       <div
-        className={`fixed inset-0 z-40 flex flex-col bg-black px-5 pb-10 pt-24 transition-opacity duration-300 sm:px-8 lg:hidden ${
+        className={`fixed inset-0 z-40 flex flex-col items-center overflow-y-auto bg-black px-5 pb-10 pt-24 text-center transition-opacity duration-300 sm:px-10 sm:pt-32 ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         aria-hidden={!open}
       >
-        <nav className="flex flex-col gap-1">
+        <nav className="flex flex-col items-center gap-1 sm:gap-2">
           {primary.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               tabIndex={open ? 0 : -1}
-              className={`display text-[3.4rem] leading-[1.05] transition ${
-                isActive(l.href) ? "text-white" : "text-white/80 hover:text-white"
+              className={`display text-[4.2rem] leading-[1] transition sm:text-[6.5rem] ${
+                isActive(l.href) ? "text-white" : "text-white hover:text-white/60"
               }`}
             >
               {l.label}
@@ -136,13 +132,13 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
+        <div className="mt-10 flex flex-wrap justify-center gap-x-7 gap-y-3">
           {secondary.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               tabIndex={open ? 0 : -1}
-              className="text-[12px] uppercase tracking-[0.22em] text-white/60 hover:text-white"
+              className="caps text-[13px] text-white/60 hover:text-white"
             >
               {l.label}
             </Link>
@@ -150,23 +146,23 @@ export default function Navbar() {
           <a
             href={ARTIST_TOOLS_URL}
             tabIndex={open ? 0 : -1}
-            className="text-[12px] uppercase tracking-[0.22em] text-white/60 hover:text-white"
+            className="caps text-[13px] text-white/60 hover:text-white"
           >
             For Artists
           </a>
         </div>
 
-        <div className="mt-auto">
+        <div className="mt-auto flex w-full max-w-sm flex-col items-center pt-12">
           <a
             href={GET_SIGNED_URL}
             target="_blank"
             rel="noopener noreferrer"
             tabIndex={open ? 0 : -1}
-            className="block bg-white py-4 text-center text-[13px] font-semibold uppercase tracking-[0.2em] text-black"
+            className="caps block w-full bg-white py-4 text-center text-[14px] text-black"
           >
             Get Signed
           </a>
-          <div className="mt-6 flex gap-5">
+          <div className="mt-7 flex gap-6">
             {labelSocials.map((s) => (
               <a
                 key={s.label}

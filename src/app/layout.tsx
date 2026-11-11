@@ -1,14 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Inter_Tight } from "next/font/google";
+import { Inter_Tight, Roboto_Flex } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const display = Anton({
+// Atlantic-style display face: a variable grotesk, set tall and condensed.
+const display = Roboto_Flex({
   variable: "--font-display-face",
-  weight: "400",
   subsets: ["latin"],
+  axes: ["wdth", "YTUC", "opsz"],
 });
 
 const body = Inter_Tight({
