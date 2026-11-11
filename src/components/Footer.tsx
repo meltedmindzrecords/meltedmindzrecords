@@ -34,6 +34,7 @@ export default function Footer() {
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [error, setError] = useState("");
+  const [doneMessage, setDoneMessage] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -48,6 +49,7 @@ export default function Footer() {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || "Something went wrong");
+      setDoneMessage(typeof data.message === "string" && /already/i.test(data.message) ? data.message : "");
       setState("done");
       setEmail("");
       setMarketingConsent(false);
@@ -67,7 +69,7 @@ export default function Footer() {
 
         {state === "done" ? (
           <p className="mt-6 max-w-md text-white/70">
-            You&apos;re in. New releases and label news will land in your inbox.
+            {doneMessage || "You’re in. New releases and label news will land in your inbox."}
           </p>
         ) : (
           <form onSubmit={handleSubmit} className="mt-7 w-full max-w-lg">
