@@ -14,7 +14,8 @@ export async function POST(request: Request) {
     const supabase = getSupabase();
     const body = await request.json();
 
-    const email = body.email;
+    const email =
+      typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     const marketingConsent = body.marketingConsent ?? false;
 
     if (!email) {
@@ -28,23 +29,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: existingSubscriber } = await supabase
-      .from("newsletter_subscribers")
-      .select("email")
-      .eq("email", email)
-      .single();
-
-    if (existingSubscriber) {
-      return NextResponse.json(
-        {
-          error: "You are already subscribed!",
-        },
-        {
-          status: 409,
-        }
-      );
-    }
-
+    // The public key can only insert (no select policy), so we can't look up
+    // existing rows first. Insert, and treat the UNIQUE(email) violation as
+    // "already subscribed" so the visitor still sees success.
     const { error } = await supabase
       .from("newsletter_subscribers")
       .insert([
@@ -55,6 +42,18 @@ export async function POST(request: Request) {
       ]);
 
     if (error) {
+      if (error.code === "23505") {
+        return NextResponse.json(
+          {
+            success: true,
+            message: "You're already on the list!",
+          },
+          {
+            status: 200,
+          }
+        );
+      }
+
       console.error(error);
 
       return NextResponse.json(
