@@ -61,10 +61,10 @@ const noLinks = {
 export const fallbackArtists: Artist[] = [
   {
     slug: "lil-rappy",
-    name: "Lil Rappy",
+    name: "B1AK3",
     genre: "Melodic Rap / Hip-Hop",
     image: "/artists/lil-rappy.jpg",
-    bio: "Lil Rappy delivers melodic energy, creative songwriting, and a unique voice within modern hip-hop.",
+    bio: "B1AK3 delivers melodic energy, creative songwriting, and a unique voice within modern hip-hop.",
     spotifyUrl: "https://open.spotify.com/artist/6thRj8cKZfWpkslddej5qx",
     appleMusicUrl: "https://music.apple.com/us/artist/lil-rappy/1715891963",
     youtubeUrl: "https://www.youtube.com/@theofficiallilrappy",
@@ -124,7 +124,7 @@ export const fallbackReleases: Release[] = [
   {
     slug: "still-with-me",
     title: "Still With Me",
-    artist: "Lil Rappy",
+    artist: "B1AK3",
     type: "Single",
     releaseDate: "July 28, 2026",
     cover: "/release%20covers/Still-With-Me.jpg",
@@ -133,7 +133,7 @@ export const fallbackReleases: Release[] = [
     shortDescription:
       "An emotional release exploring loyalty, perseverance, and personal growth through melodic storytelling.",
     about:
-      'Melted Mindz Records presents "Still With Me" by Lil Rappy. The release delivers melodic storytelling, emotional depth, and a unique sound that represents the next generation of independent music.',
+      'Melted Mindz Records presents "Still With Me" by B1AK3. The release delivers melodic storytelling, emotional depth, and a unique sound that represents the next generation of independent music.',
     link: "https://too.fm/stillwithme",
     spotifyUrl: null,
     appleMusicUrl: null,
@@ -358,11 +358,11 @@ export type NewsItem = {
 export const fallbackNews: NewsItem[] = [
   {
     slug: "the-next-chapter-welcoming-lil-rappy",
-    title: "The Next Chapter of Melted Mindz Records: Welcoming Lil Rappy",
+    title: "The Next Chapter of Melted Mindz Records: Welcoming B1AK3",
     date: "Mar 29, 2026",
     category: "Press Release",
     description:
-      "Melted Mindz Records announces the next chapter of the label with the welcoming of Lil Rappy, highlighting the artist's journey and the continued growth of the Melted Mindz Records roster.",
+      "Melted Mindz Records announces the next chapter of the label with the welcoming of B1AK3, highlighting the artist's journey and the continued growth of the Melted Mindz Records roster.",
     link: "https://meltedmindzrecords.substack.com/p/the-next-chapter-of-melted-mindz",
     image: null,
   },
