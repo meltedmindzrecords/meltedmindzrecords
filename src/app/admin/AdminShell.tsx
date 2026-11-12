@@ -176,7 +176,7 @@ function Notice({ title, children }: { title: string; children: React.ReactNode 
 }
 
 function SignIn({ supabase }: { supabase: SupabaseClient }) {
-  const [mode, setMode] = useState<"password" | "reset">("password");
+  const [mode, setMode] = useState<"password" | "reset" | "link">("password");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "busy" | "sent" | "error">("idle");
@@ -216,20 +216,48 @@ function SignIn({ supabase }: { supabase: SupabaseClient }) {
     }
   };
 
+  const sendLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("busy");
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email.trim().toLowerCase(),
+      options: { shouldCreateUser: false, emailRedirectTo: `${window.location.origin}/admin` },
+    });
+    if (error) {
+      setStatus("error");
+      setMessage(
+        /rate|limit|seconds/i.test(error.message)
+          ? "Too many emails were sent in the last hour. Wait a bit and try again."
+          : "We couldn't send a link to that address. Use the email you use for the artist portal."
+      );
+    } else {
+      setStatus("sent");
+    }
+  };
+
+  const titles = {
+    password: "Sign in to edit the website",
+    reset: "Set or reset your password",
+    link: "Email me a sign-in link",
+  };
+  const intros = {
+    password: "Label admins only. Use the email you use for the artist portal.",
+    reset: "We'll email you one link to choose a password. After that you just sign in with email and password.",
+    link: "We'll email you a one-time link that signs you straight in.",
+  };
+
   return (
     <div className="mx-auto max-w-md rounded-2xl border border-white/10 bg-white/[0.03] p-8">
-      <h1 className="text-2xl font-semibold">{mode === "password" ? "Sign in to edit the website" : "Set or reset your password"}</h1>
-      <p className="mt-2 text-[15px] leading-7 text-white/70">
-        {mode === "password"
-          ? "Label admins only. Use the email you use for the artist portal."
-          : "We'll email you one link to choose a password. After that you just sign in with email and password."}
-      </p>
+      <h1 className="text-2xl font-semibold">{titles[mode]}</h1>
+      <p className="mt-2 text-[15px] leading-7 text-white/70">{intros[mode]}</p>
       {status === "sent" ? (
         <p className="mt-6 rounded-xl bg-emerald-500/10 p-4 text-[15px] text-emerald-200" role="status">
-          Check your inbox (and spam) for the email, open the link, and pick your password. You only do this once.
+          {mode === "link"
+            ? "Check your inbox (and spam) and open the link on this device."
+            : "Check your inbox (and spam) for the email, open the link, and pick your password. You only do this once."}
         </p>
       ) : (
-        <form onSubmit={mode === "password" ? signIn : sendReset} className="mt-6 space-y-4">
+        <form onSubmit={mode === "password" ? signIn : mode === "reset" ? sendReset : sendLink} className="mt-6 space-y-4">
           <label className="block">
             <span className="text-[14px] font-medium">Email</span>
             <input
@@ -258,21 +286,34 @@ function SignIn({ supabase }: { supabase: SupabaseClient }) {
             <p className="text-[14px] text-red-300" role="alert">{message}</p>
           )}
           <button type="submit" disabled={status === "busy"} className="admin-btn admin-btn-primary w-full">
-            {status === "busy" ? "One moment…" : mode === "password" ? "Sign in" : "Email me a link to set my password"}
+            {status === "busy"
+              ? "One moment…"
+              : mode === "password"
+                ? "Sign in"
+                : mode === "reset"
+                  ? "Email me a link to set my password"
+                  : "Email me a sign-in link"}
           </button>
         </form>
       )}
-      <button
-        type="button"
-        onClick={() => {
-          setMode(mode === "password" ? "reset" : "password");
-          setStatus("idle");
-          setMessage("");
-        }}
-        className="mt-5 text-[14px] text-white/75 underline underline-offset-4 hover:text-white"
-      >
-        {mode === "password" ? "First time, or forgot it? Set or reset my password" : "Back to sign in"}
-      </button>
+      <div className="mt-5 flex flex-col items-start gap-3 text-[14px]">
+        {(["password", "reset", "link"] as const)
+          .filter((m) => m !== mode)
+          .map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => {
+                setMode(m);
+                setStatus("idle");
+                setMessage("");
+              }}
+              className="text-white/75 underline underline-offset-4 hover:text-white"
+            >
+              {m === "password" ? "Sign in with my password" : m === "reset" ? "First time, or forgot it? Set or reset my password" : "Email me a sign-in link instead"}
+            </button>
+          ))}
+      </div>
     </div>
   );
 }
