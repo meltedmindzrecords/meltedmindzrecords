@@ -72,6 +72,23 @@ export default function Marquee({
           {copy(true)}
         </div>
       </div>
+      <button
+        type="button"
+        onClick={() => setPaused((p) => !p)}
+        aria-label={paused ? "Play scrolling names" : "Pause scrolling names"}
+        className={`absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full opacity-60 transition hover:opacity-100 focus-visible:opacity-100 ${
+          tone === "molten" ? "bg-black/70 text-white" : "bg-white/80 text-black"
+        }`}
+      >
+        {paused ? (
+          <span aria-hidden="true" className="ml-0.5 h-0 w-0 border-y-[4px] border-l-[7px] border-y-transparent border-l-current" />
+        ) : (
+          <span aria-hidden="true" className="flex gap-[2px]">
+            <span className="h-2 w-[2.5px] bg-current" />
+            <span className="h-2 w-[2.5px] bg-current" />
+          </span>
+        )}
+      </button>
     </section>
   );
 }
