@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { SITE_IMAGES_BUCKET } from "@/lib/supabaseBrowser";
+import { releaseInstant } from "@/lib/time";
 
 import { useAdmin } from "./AdminShell";
 import { slugify, type CmsConfig, type Field, type Row } from "./cms";
@@ -249,6 +250,7 @@ export default function CmsManager({ config }: { config: CmsConfig }) {
                           <Badge tone="accent">Goes live {new Date(String(r.publish_at)).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}</Badge>
                         )}
                         {r.featured === true && <Badge tone="accent">Homepage hero</Badge>}
+                        {config.table === "releases" && isFutureRelease(r) && <Badge tone="accent">Countdown on</Badge>}
                       </div>
                       {config.viewUrl && r.visible !== false && !scheduled && (
                         <a
@@ -300,6 +302,12 @@ export default function CmsManager({ config }: { config: CmsConfig }) {
       )}
     </section>
   );
+}
+
+/** A release whose date (and optional time) in Central time is still ahead. */
+function isFutureRelease(r: Row): boolean {
+  const at = releaseInstant(r.release_date, r.release_time);
+  return !!at && Date.parse(at) > Date.now();
 }
 
 export function Badge({ tone, children }: { tone: "muted" | "accent"; children: React.ReactNode }) {
@@ -399,7 +407,8 @@ function Editor({
       if (typeof v === "string") v = v.trim();
       if (f.type === "number") v = v === "" || v === undefined || v === null ? 100 : Number(v);
       if (f.type === "bool") v = v === true;
-      if ((f.type === "date" || f.type === "url" || f.type === "image" || f.type === "datetime") && v === "") v = null;
+      if ((f.type === "date" || f.type === "time" || f.type === "url" || f.type === "image" || f.type === "datetime") && v === "") v = null;
+      if (f.type === "time" && typeof v === "string") v = v.slice(0, 5);
       if (f.type === "datetime" && typeof v === "string" && v) {
         const t = new Date(v); // a local "2026-11-20T09:00" from the picker, or a stored ISO time
         v = Number.isNaN(t.getTime()) ? null : t.toISOString();
@@ -662,7 +671,7 @@ export function FieldInput({
       {label}
       <input
         id={id}
-        type={field.type === "url" ? "url" : field.type === "date" ? "date" : field.type === "number" ? "number" : "text"}
+        type={field.type === "url" ? "url" : field.type === "date" ? "date" : field.type === "time" ? "time" : field.type === "number" ? "number" : "text"}
         required={field.required}
         value={field.type === "date" ? str.slice(0, 10) : str}
         onChange={(e) => onChange(e.target.value)}

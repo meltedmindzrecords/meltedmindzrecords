@@ -5,6 +5,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 
 import ArtistCard from "@/components/ArtistCard";
 import Marquee from "@/components/Marquee";
+import Countdown from "@/components/Countdown";
 import ReleaseCard from "@/components/ReleaseCard";
 import Reveal from "@/components/Reveal";
 import SectionHead from "@/components/SectionHead";
@@ -15,6 +16,11 @@ import {
   getArtist,
   getArtists,
   getReleases,
+  outReleases,
+  upcomingReleases,
+  isUpcoming,
+  presaveLinks,
+  streamLinks,
   isOptimizable,
   releasesFor,
 } from "@/lib/content";
@@ -65,7 +71,11 @@ export default async function ArtistProfile({ params }: Props) {
     { label: "TikTok", href: info.tiktokUrl },
   ];
   const hasLinks = present(links).length > 0;
-  const theirReleases = releasesFor(info, releases);
+  // Out first (newest first), then anything still coming soon (soonest first).
+  const now = Date.now();
+  const mine = releasesFor(info, releases);
+  const soon = upcomingReleases(mine, now);
+  const theirReleases = soon.length > 0 ? [...outReleases(mine, now), ...soon] : mine;
   const others = artists.filter((a) => a.slug !== info.slug);
 
   const [latest, ...moreMusic] = theirReleases;
@@ -148,6 +158,16 @@ export default async function ArtistProfile({ params }: Props) {
                 {latest.shortDescription && (
                   <p className="mt-6 max-w-lg text-[17px] leading-8 text-white/75">{latest.shortDescription}</p>
                 )}
+                {isUpcoming(latest, now) && latest.releaseAt ? (
+                  <Countdown
+                    to={latest.releaseAt}
+                    serverNow={now}
+                    className="mt-8 max-w-[640px]"
+                    before={presaveLinks(latest)}
+                    after={streamLinks(latest)}
+                    name={latest.title}
+                  />
+                ) : (
                 <div className="mt-8">
                   <StreamButtons
                     links={[
@@ -158,6 +178,7 @@ export default async function ArtistProfile({ params }: Props) {
                     ]}
                   />
                 </div>
+                )}
               </Reveal>
             </div>
             {moreMusic.length > 0 && (
@@ -167,6 +188,22 @@ export default async function ArtistProfile({ params }: Props) {
                     <ReleaseCard
                       release={r}
                       showArtist={false}
+                      {...(isUpcoming(r, now) && r.releaseAt
+                        ? {
+                            href: presaveLinks(r)[0]?.href ?? r.link,
+                            below: (
+                              <Countdown
+                                to={r.releaseAt}
+                                serverNow={now}
+                                size="sm"
+                                className="mt-4"
+                                before={presaveLinks(r)}
+                                after={streamLinks(r)}
+                                name={r.title}
+                              />
+                            ),
+                          }
+                        : {})}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     />
                   </Reveal>

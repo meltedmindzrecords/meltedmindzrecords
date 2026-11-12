@@ -1,5 +1,5 @@
 export type FieldType =
-  | "text" | "textarea" | "url" | "image" | "video" | "date" | "datetime" | "bool" | "number" | "select" | "artist";
+  | "text" | "textarea" | "url" | "image" | "video" | "date" | "time" | "datetime" | "bool" | "number" | "select" | "artist";
 
 export type Field = {
   key: string;
@@ -96,11 +96,15 @@ export const releasesConfig: CmsConfig = {
     { key: "title", label: "Title", type: "text", required: true },
     { key: "artist", label: "Artist", type: "artist", required: true, help: "Pick a roster artist so the release shows on their page." },
     { key: "type", label: "Type", type: "select", options: ["Single", "EP", "Album", "Mixtape", "Music Video"] },
-    { key: "release_date", label: "Release date", type: "date" },
+    { key: "release_date", label: "Release date", type: "date", help: "Set a future release date to show a countdown on the site." },
+    { key: "release_time", label: "Release time (optional)", type: "time", help: "Central time. Leave empty for midnight at the start of release day." },
     { key: "cover_url", label: "Cover art", type: "image", full: true },
     { key: "short_description", label: "Short description", type: "textarea", full: true, help: "One or two lines for cards." },
     { key: "description", label: "Description", type: "textarea", full: true },
     { key: "about", label: "About", type: "textarea", full: true },
+    { key: "presave_url", label: "Pre-save link (all platforms)", type: "url", full: true, help: "Get this from your distributor (e.g. Too Lost’s pre-save / smart link) or a pre-save page like Hypeddit or Feature.fm. The Pre-save buttons show next to the countdown, then switch to the listen links on release day." },
+    { key: "presave_spotify_url", label: "Spotify pre-save link (optional)", type: "url" },
+    { key: "presave_apple_music_url", label: "Apple Music pre-add link (optional)", type: "url" },
     { key: "link_url", label: "Listen link (smart link)", type: "url" },
     { key: "spotify_url", label: "Spotify link", type: "url" },
     { key: "apple_music_url", label: "Apple Music link", type: "url" },

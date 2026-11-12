@@ -226,3 +226,17 @@ begin
   execute 'drop trigger if exists log_site_change on public.newsletter_subscribers';
   execute 'create trigger log_site_change after delete on public.newsletter_subscribers for each row execute function public.log_site_change()';
 end $$;
+
+-- 6) Release countdowns: a release whose release_date is still ahead shows a
+--    live countdown on the site. Optional release time (24h "HH:MM", Central
+--    time; empty = midnight) and optional pre-save links: a general one (the
+--    distributor's smart link) plus Spotify and Apple Music. The table's
+--    existing RLS and grants cover these columns (public read of visible,
+--    published rows; writes only by portal admins).
+alter table public.releases add column if not exists presave_url text;
+alter table public.releases add column if not exists presave_spotify_url text;
+alter table public.releases add column if not exists presave_apple_music_url text;
+alter table public.releases add column if not exists release_time text;
+alter table public.releases drop constraint if exists releases_release_time_format;
+alter table public.releases add constraint releases_release_time_format
+  check (release_time is null or release_time ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$');

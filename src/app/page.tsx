@@ -18,6 +18,8 @@ import {
 } from "@/lib/content";
 import { getSettings } from "@/lib/settings";
 import Tall from "@/components/Tall";
+import Countdown from "@/components/Countdown";
+import { isUpcoming, outReleases, presaveLinks, streamLinks, upcomingReleases } from "@/lib/content";
 
 // Content is edited in Supabase; refresh at most once a minute.
 export const revalidate = 60;
@@ -39,6 +41,15 @@ export default async function Home() {
   // Home shows ONE release: the featured one (newest first). The full catalog lives on /releases.
   const lead = featured;
   const leadArtist = lead ? artistFor(lead, artists) : null;
+
+  // Coming soon: the next release whose date is still ahead (not the one
+  // already in "Latest release", if he featured an upcoming one himself).
+  const now = Date.now();
+  const leadUpcoming = lead ? isUpcoming(lead, now) : false;
+  const featuredUpcoming = featured ? isUpcoming(featured, now) : false;
+  const upcoming = upcomingReleases(releases, now).filter((r) => !(s.show_latest && lead && r.slug === lead.slug));
+  const next = upcoming[0] ?? null;
+  const nextArtist = next ? artistFor(next, artists) : null;
 
   // Spotlight: the artist picked in /admin/homepage, else the artist behind the
   // featured release, else the first artist in the CMS order.
@@ -81,7 +92,7 @@ export default async function Home() {
                   <span className="pulse-dot inline-block h-2.5 w-2.5 rounded-full bg-molten" aria-hidden="true" />
                   {s.hero_eyebrow || (
                     <>
-                      Out now · {featured.type || "Release"}
+                      {featuredUpcoming ? "Coming soon" : "Out now"} · {featured.type || "Release"}
                       {featured.releaseDate ? ` · ${featured.releaseDate}` : ""}
                     </>
                   )}
@@ -95,10 +106,16 @@ export default async function Home() {
                   <Tall>{s.hero_subtext || featured.artist}</Tall>
                 </p>
                 <div className="rise mt-9 flex flex-wrap gap-3" style={{ ["--d" as string]: "380ms" }}>
-                  {featuredListen && (
-                    <a href={featuredListen} target="_blank" rel="noopener noreferrer" className={hot}>
-                      Listen now <span aria-hidden="true">↗</span>
+                  {featuredUpcoming && presaveLinks(featured)[0] ? (
+                    <a href={presaveLinks(featured)[0].href} target="_blank" rel="noopener noreferrer" className={hot}>
+                      Pre-save <span aria-hidden="true">↗</span>
                     </a>
+                  ) : (
+                    featuredListen && (
+                      <a href={featuredListen} target="_blank" rel="noopener noreferrer" className={hot}>
+                        Listen now <span aria-hidden="true">↗</span>
+                      </a>
+                    )
                   )}
                   {featuredArtist && (
                     <Link href={`/artists/${featuredArtist.slug}`} className={line}>
@@ -137,13 +154,67 @@ export default async function Home() {
       {/* TICKER: artists and releases */}
       {s.show_ticker && <Marquee items={ticker} label="Artists and releases" />}
 
+      {/* COMING SOON: the next release that is not out yet, with a live countdown */}
+      {next && next.releaseAt && (
+        <section aria-labelledby="soon-title" className="relative overflow-x-clip border-b border-white/10">
+          <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_85%_30%,rgba(255,61,46,0.22),transparent_60%)]" />
+          <div className="relative mx-auto max-w-[1600px] px-5 py-24 sm:px-10 lg:py-32">
+            <SectionHead
+              index={idx()}
+              eyebrow="Coming soon"
+              title="Countdown"
+              id="soon-title"
+              link={upcoming.length > 1 ? { href: "/releases", label: `${upcoming.length - 1} more coming` } : undefined}
+            />
+            <div className="grid items-center gap-8 sm:gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
+              <Reveal>
+                <div className="relative aspect-square w-[68%] max-w-[520px] overflow-hidden sm:w-full lg:mx-auto bg-zinc-900 shadow-[0_30px_80px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
+                  <Image
+                    src={next.cover}
+                    alt={`${next.title} cover art`}
+                    fill
+                    sizes="(max-width: 1024px) 90vw, 520px"
+                    className="object-cover"
+                    unoptimized={!isOptimizable(next.cover)}
+                  />
+                </div>
+              </Reveal>
+              <Reveal delay={120} className="min-w-0">
+                <p className="caps flex items-center gap-3 text-[12px] text-white/70">
+                  <span className="pulse-dot inline-block h-2.5 w-2.5 rounded-full bg-molten" aria-hidden="true" />
+                  {[next.type, next.releaseDate].filter(Boolean).join(" · ")}
+                </p>
+                <h3 className="display mt-3 break-words text-[3.6rem] sm:text-[6rem] lg:text-[7rem]"><Tall>{next.title}</Tall></h3>
+                <p className="caps mt-3 text-[17px] text-molten">
+                  {nextArtist ? (
+                    <Link href={`/artists/${nextArtist.slug}`} className="wipe pb-0.5">
+                      <Tall>{next.artist}</Tall>
+                    </Link>
+                  ) : (
+                    <Tall>{next.artist}</Tall>
+                  )}
+                </p>
+                <Countdown
+                  to={next.releaseAt}
+                  serverNow={now}
+                  className="mt-7 max-w-[640px]"
+                  before={presaveLinks(next)}
+                  after={streamLinks(next)}
+                  name={next.title}
+                />
+              </Reveal>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* LATEST RELEASES */}
       {s.show_latest && lead && (
         <section aria-labelledby="latest-title" className="overflow-x-clip">
           <div className="mx-auto max-w-[1600px] px-5 py-24 sm:px-10 lg:py-36">
             <SectionHead
               index={idx()}
-              eyebrow="Latest release"
+              eyebrow={leadUpcoming ? "Coming soon" : "Latest release"}
               title="New music"
               id="latest-title"
               link={{ href: "/releases", label: "All releases" }}
@@ -171,6 +242,16 @@ export default async function Home() {
                 {lead.shortDescription && (
                   <p className="mt-7 max-w-lg text-[17px] leading-8 text-white/75">{lead.shortDescription}</p>
                 )}
+                {leadUpcoming && lead.releaseAt ? (
+                  <Countdown
+                    to={lead.releaseAt}
+                    serverNow={now}
+                    className="mt-8 max-w-[640px]"
+                    before={presaveLinks(lead)}
+                    after={streamLinks(lead)}
+                    name={lead.title}
+                  />
+                ) : (
                 <div className="mt-9">
                   <StreamButtons
                     links={[
@@ -181,6 +262,7 @@ export default async function Home() {
                     ]}
                   />
                 </div>
+                )}
                 <Link
                   href="/releases"
                   className="caps group mt-9 inline-flex items-center gap-2 text-[13px] text-white/75 hover:text-white"
@@ -228,7 +310,7 @@ export default async function Home() {
                 )}
                 {spotReleases.length > 0 && (
                   <p className="caps mt-7 text-[13px] text-white/70">
-                    Latest: <span className="text-molten">{spotReleases[0].title}</span>
+                    Latest: <span className="text-molten">{(outReleases(spotReleases, now)[0] ?? spotReleases[0]).title}</span>
                   </p>
                 )}
                 <div className="mt-8 flex flex-wrap items-center gap-6">

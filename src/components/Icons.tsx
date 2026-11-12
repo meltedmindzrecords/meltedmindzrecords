@@ -20,6 +20,6 @@ const icons: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 export function LinkIcon({ label, className }: { label: string; className?: string }) {
-  const Icon = icons[label] ?? FaArrowUpRightFromSquare;
+  const Icon = icons[label] ?? icons[label.replace(/^Pre-save on /, "")] ?? FaArrowUpRightFromSquare;
   return <Icon className={className} aria-hidden="true" />;
 }

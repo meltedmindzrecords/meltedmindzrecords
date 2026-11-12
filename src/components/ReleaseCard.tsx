@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 
 import type { Release } from "@/lib/content";
 import { isOptimizable, listenLink } from "@/lib/content";
@@ -10,13 +11,19 @@ export default function ReleaseCard({
   sizes = "(max-width: 640px) 80vw, (max-width: 1024px) 33vw, 25vw",
   showArtist = true,
   priority = false,
+  href: hrefOverride,
+  below,
 }: {
   release: Release;
   sizes?: string;
   showArtist?: boolean;
   priority?: boolean;
+  /** Where the card goes instead of the listen link (e.g. a pre-save link). */
+  href?: string | null;
+  /** Shown under the card, outside its link (e.g. a countdown). */
+  below?: ReactNode;
 }) {
-  const href = listenLink(release);
+  const href = hrefOverride !== undefined ? hrefOverride : listenLink(release);
   const inner = (
     <>
       <div className="relative aspect-square overflow-hidden bg-zinc-900">
@@ -47,11 +54,18 @@ export default function ReleaseCard({
       )}
     </>
   );
-  return href ? (
+  const card = href ? (
     <a href={href} target="_blank" rel="noopener noreferrer" className="group block">
       {inner}
     </a>
   ) : (
     <div className="group">{inner}</div>
+  );
+  if (!below) return card;
+  return (
+    <>
+      {card}
+      {below}
+    </>
   );
 }
