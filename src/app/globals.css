@@ -348,11 +348,12 @@ html.is-admin .grain {
   outline-offset: 2px;
 }
 
-/* Digits as tall as the capitals in the display face (B1AK3) */
+/* Digits as tall as the capitals in the display face (B1AK3). The loaded
+   font draws figures about 7% shorter than capitals; a slightly bigger size on
+   the same baseline lines their tops up. line-height 0 keeps the line box. */
 .display .fig {
-  display: inline-block;
-  transform: scaleY(1.07);
-  transform-origin: 50% 100%;
+  font-size: 1.07em;
+  line-height: 0;
 }
 .admin-btn-sm {
   padding: 0.4rem 0.8rem;
