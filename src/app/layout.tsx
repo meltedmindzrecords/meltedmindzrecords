@@ -4,6 +4,7 @@ import "./globals.css";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import RevealObserver from "@/components/RevealObserver";
 
 // Atlantic-style display face: a variable grotesk, set tall and condensed.
 const display = Roboto_Flex({
@@ -40,8 +41,11 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${display.variable} ${body.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <head>
+        {/* Lets CSS hide scroll-reveal content only when JS will reveal it. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         <script
           id="cookieyes"
           type="text/javascript"
@@ -49,12 +53,15 @@ export default function RootLayout({
         />
       </head>
 
-      <body className="flex min-h-screen flex-col bg-black text-white">
+      <body className="relative flex min-h-screen flex-col bg-black text-white">
         <Navbar />
 
         <main className="flex-1">{children}</main>
 
         <Footer />
+
+        <RevealObserver />
+        <div className="grain" aria-hidden="true" />
       </body>
     </html>
   );

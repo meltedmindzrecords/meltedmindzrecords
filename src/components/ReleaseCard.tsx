@@ -25,14 +25,22 @@ export default function ReleaseCard({
           fill
           priority={priority}
           sizes={sizes}
-          className="object-cover transition duration-700 group-hover:scale-[1.04]"
+          className="object-cover transition duration-700 group-hover:scale-[1.06]"
           unoptimized={!isOptimizable(release.cover)}
         />
+        {href && (
+          <span
+            aria-hidden="true"
+            className="absolute bottom-3 right-3 flex h-12 w-12 translate-y-2 items-center justify-center rounded-full bg-molten text-black opacity-0 shadow-lg transition duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100"
+          >
+            <span className="ml-0.5 h-0 w-0 border-y-[7px] border-l-[11px] border-y-transparent border-l-black" />
+          </span>
+        )}
       </div>
-      <p className="caps mt-4 text-[11px] text-white/50">
+      <p className="caps mt-4 text-[11px] text-white/60">
         {[release.type, release.releaseDate].filter(Boolean).join(" · ")}
       </p>
-      <h3 className="display mt-2 text-[2.1rem] sm:text-[2.5rem]">{release.title}</h3>
+      <h3 className="display mt-2 text-[2.1rem] transition group-hover:text-molten sm:text-[2.5rem]">{release.title}</h3>
       {showArtist && release.artist && (
         <p className="caps mt-1.5 text-[13px] text-white/75">{release.artist}</p>
       )}
