@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import { LinkIcon } from "@/components/Icons";
@@ -30,6 +31,7 @@ const legal = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
   const [email, setEmail] = useState("");
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
@@ -61,6 +63,9 @@ export default function Footer() {
 
   const linkRow = [...explore, ...company];
 
+
+  // The website editor (/admin) has no site footer.
+  if (pathname?.startsWith("/admin")) return null;
   return (
     <footer className="border-t border-white/15 bg-black text-white">
       <div className="mx-auto flex max-w-[1600px] flex-col items-center px-5 py-16 text-center sm:px-10 lg:py-20">

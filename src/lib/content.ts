@@ -334,3 +334,92 @@ export function artistFor(release: Release, artists: Artist[]): Artist | null {
 export function listenLink(release: Release): string | null {
   return release.link ?? release.spotifyUrl ?? release.appleMusicUrl ?? release.youtubeUrl;
 }
+
+
+/* ------------------------------------------------------------------ */
+/* News (table: public.news, edited at /admin)                         */
+/* ------------------------------------------------------------------ */
+
+export type NewsItem = {
+  slug: string;
+  title: string;
+  category: string;
+  date: string;
+  description: string;
+  link: string | null;
+  image: string | null;
+};
+
+export const fallbackNews: NewsItem[] = [
+  {
+    slug: "the-next-chapter-welcoming-lil-rappy",
+    title: "The Next Chapter of Melted Mindz Records: Welcoming Lil Rappy",
+    date: "Mar 29, 2026",
+    category: "Press Release",
+    description:
+      "Melted Mindz Records announces the next chapter of the label with the welcoming of Lil Rappy, highlighting the artist's journey and the continued growth of the Melted Mindz Records roster.",
+    link: "https://meltedmindzrecords.substack.com/p/the-next-chapter-of-melted-mindz",
+    image: null,
+  },
+  {
+    slug: "the-sonic-architect-welcoming-lucius",
+    title: "The Sonic Architect: Welcoming Lucius",
+    date: "Mar 29, 2026",
+    category: "Press Release",
+    description:
+      "Melted Mindz Records welcomes Lucius and introduces a new creative force to the label family.",
+    link: "https://meltedmindzrecords.substack.com/p/the-sonic-architect-welcoming-lucius",
+    image: null,
+  },
+  {
+    slug: "from-the-swamp-to-the-world-okay-boomhauer",
+    title: "From The Swamp To The World: Okay Boomhauer",
+    date: "Jul 8, 2026",
+    category: "Press Release",
+    description:
+      "Melted Mindz Records highlights Okay Boomhauer and the creative vision behind the artist.",
+    link: "https://open.substack.com/pub/meltedmindzrecords/p/from-the-swamp-to-the-world-okay",
+    image: null,
+  },
+  {
+    slug: "in-the-grip-of-the-undead-gutzombie",
+    title: "In The Grip Of The Undead: GutZombie",
+    date: "Jul 8, 2026",
+    category: "Press Release",
+    description:
+      "Melted Mindz Records showcases GutZombie and their unique artistic identity.",
+    link: "https://open.substack.com/pub/meltedmindzrecords/p/in-the-grip-of-the-undead-gutzombie",
+    image: null,
+  },
+];
+
+const SHORT_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "2026-03-29" -> "Mar 29, 2026". */
+function formatShortDate(v: unknown): string {
+  const raw = str(v);
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(raw);
+  if (!m) return raw;
+  const month = SHORT_MONTHS[Number(m[2]) - 1];
+  return month ? `${month} ${Number(m[3])}, ${m[1]}` : raw;
+}
+
+export async function getNews(): Promise<NewsItem[]> {
+  const rows = await fetchRows("news");
+  if (!rows) return fallbackNews;
+  const items = rows
+    .map((r) => {
+      const title = str(r.title);
+      return {
+        slug: str(r.slug, slugify(title)),
+        title,
+        category: str(r.category, "News"),
+        date: formatShortDate(r.published_on),
+        description: str(r.description),
+        link: opt(r.link_url),
+        image: opt(r.image_url),
+      };
+    })
+    .filter((n) => n.title);
+  return items.length > 0 ? items : fallbackNews;
+}

@@ -1,56 +1,17 @@
 import type { Metadata } from "next";
 
+import { getNews } from "@/lib/content";
+
+// Edited at /admin; refreshed right after a save, or within a minute.
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: "News",
   description: "Press releases and announcements from Melted Mindz Records.",
 };
 
-const pressReleases = [
-  {
-    title:
-      "The Next Chapter of Melted Mindz Records: Welcoming Lil Rappy",
-    date: "Mar 29, 2026",
-    category: "Press Release",
-    description:
-      "Melted Mindz Records announces the next chapter of the label with the welcoming of Lil Rappy, highlighting the artist's journey and the continued growth of the Melted Mindz Records roster.",
-    link:
-      "https://meltedmindzrecords.substack.com/p/the-next-chapter-of-melted-mindz",
-  },
-
-  {
-    title: "The Sonic Architect: Welcoming Lucius",
-    date: "Mar 29, 2026",
-    category: "Press Release",
-    description:
-      "Melted Mindz Records welcomes Lucius and introduces a new creative force to the label family.",
-    link:
-      "https://meltedmindzrecords.substack.com/p/the-sonic-architect-welcoming-lucius",
-  },
-
-  {
-    title: "From The Swamp To The World: Okay Boomhauer",
-    date: "Jul 8, 2026",
-    category: "Press Release",
-    description:
-      "Melted Mindz Records highlights Okay Boomhauer and the creative vision behind the artist.",
-    link:
-      "https://open.substack.com/pub/meltedmindzrecords/p/from-the-swamp-to-the-world-okay",
-  },
-
-  {
-    title: "In The Grip Of The Undead: GutZombie",
-    date: "Jul 8, 2026",
-    category: "Press Release",
-    description:
-      "Melted Mindz Records showcases GutZombie and their unique artistic identity.",
-    link:
-      "https://open.substack.com/pub/meltedmindzrecords/p/in-the-grip-of-the-undead-gutzombie",
-  },
-];
-
-
-export default function NewsPage() {
-  const [lead, ...rest] = pressReleases;
+export default async function NewsPage() {
+  const [lead, ...rest] = await getNews();
 
   return (
     <div className="mx-auto max-w-[1440px] px-5 pb-24 pt-28 sm:px-8 sm:pt-36">
@@ -59,7 +20,7 @@ export default function NewsPage() {
 
       {lead && (
         <a
-          href={lead.link}
+          href={lead.link ?? undefined}
           target="_blank"
           rel="noopener noreferrer"
           className="group mt-14 block border-t border-white pt-8"
@@ -80,9 +41,9 @@ export default function NewsPage() {
       {rest.length > 0 && (
         <ul className="mt-20 border-t border-white/10">
           {rest.map((item) => (
-            <li key={item.title} className="border-b border-white/10">
+            <li key={item.slug} className="border-b border-white/10">
               <a
-                href={item.link}
+                href={item.link ?? undefined}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group grid gap-3 py-8 lg:grid-cols-12 lg:gap-8"
