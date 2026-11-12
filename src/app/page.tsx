@@ -5,7 +5,6 @@ import HeroVideo from "@/components/HeroVideo";
 import Marquee from "@/components/Marquee";
 import ReleaseCard from "@/components/ReleaseCard";
 import Reveal from "@/components/Reveal";
-import RosterList from "@/components/RosterList";
 import SectionHead from "@/components/SectionHead";
 import VinylCover from "@/components/VinylCover";
 import { SocialIcons, StreamButtons } from "@/components/LinkButtons";
@@ -248,23 +247,13 @@ export default async function Home() {
         </section>
       )}
 
-      {/* ROSTER: every name, stacked big */}
+      {/* ARTISTS: link to the full roster */}
       {roster.length > 0 && (
-        <section aria-labelledby="roster-title" className="mx-auto max-w-[1600px] px-5 py-24 sm:px-10 lg:py-36">
-          <SectionHead
-            index={idx()}
-            eyebrow="The roster"
-            title="Artists"
-            id="roster-title"
-            link={{ href: "/artists", label: "View all" }}
-          />
-          <RosterList artists={roster} />
+        <section aria-label="Our artists" className="mx-auto max-w-[1600px] px-5 py-16 text-center sm:px-10 lg:py-24">
+          <Link href="/artists" className={hot}>
+            See all artists <span aria-hidden="true">→</span>
+          </Link>
         </section>
-      )}
-
-      {/* SECOND TICKER: outline names, the other way */}
-      {roster.length > 0 && (
-        <Marquee items={roster.map((a) => a.name)} label="Our artists" tone="outline" reverse speed={55} />
       )}
 
       {/* THE LABEL */}
