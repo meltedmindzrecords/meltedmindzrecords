@@ -26,9 +26,13 @@ export default async function ReleasesPage() {
 
       {releases.length > 0 && (
         <section className="mx-auto max-w-[1600px] px-5 pb-24 pt-14 sm:px-10 lg:pt-20">
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4">
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-10 sm:gap-x-6">
             {releases.map((r, i) => (
-              <Reveal key={r.slug} delay={Math.min(i, 6) * 60}>
+              <Reveal
+                key={r.slug}
+                delay={Math.min(i, 6) * 60}
+                className="w-[calc(50%-0.5rem)] sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]"
+              >
                 <ReleaseCard release={r} sizes="(max-width: 1024px) 50vw, 25vw" />
               </Reveal>
             ))}
