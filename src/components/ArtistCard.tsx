@@ -28,7 +28,7 @@ export default function ArtistCard({
         fill
         priority={priority}
         sizes={sizes}
-        className="object-cover object-[50%_25%] grayscale transition duration-700 group-hover:scale-[1.04] group-hover:grayscale-0"
+        className="object-cover object-[50%_25%] transition duration-700 group-hover:scale-[1.04]"
         unoptimized={!isOptimizable(artist.image)}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />

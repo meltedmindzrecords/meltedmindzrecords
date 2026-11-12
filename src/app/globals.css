@@ -131,7 +131,7 @@ html.js .reveal.is-in {
 }
 /* Photos that go from grey to color as they come into view. */
 html.js .reveal-color img {
-  filter: grayscale(1);
+  filter: none;
   transition: filter 1.6s ease 0.2s, transform 0.7s ease;
 }
 html.js .reveal-color.is-in img {

@@ -40,7 +40,7 @@ export default function RosterList({ artists }: { artists: Artist[] }) {
                 alt=""
                 fill
                 sizes="(max-width: 640px) 80px, 160px"
-                className="object-cover object-[50%_25%] grayscale transition duration-500 group-hover:scale-110 group-hover:grayscale-0"
+                className="object-cover object-[50%_25%] transition duration-500 group-hover:scale-110"
                 unoptimized={!isOptimizable(artist.image)}
               />
             </div>

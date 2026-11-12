@@ -74,24 +74,6 @@ export default function HeroVideo({
       >
         <source src={src} type="video/mp4" />
       </video>
-      <button
-        type="button"
-        onClick={toggle}
-        aria-pressed={!playing}
-        className="caps absolute bottom-5 right-5 z-20 flex items-center gap-2 rounded-full border border-white/40 bg-black/50 px-3.5 py-2 text-[11px] text-white backdrop-blur transition hover:border-white hover:bg-black/80 sm:bottom-8 sm:right-10"
-      >
-        <span aria-hidden="true" className="inline-flex h-2.5 w-2.5 items-center justify-center">
-          {playing ? (
-            <span className="flex gap-[3px]">
-              <span className="h-2.5 w-[3px] bg-white" />
-              <span className="h-2.5 w-[3px] bg-white" />
-            </span>
-          ) : (
-            <span className="h-0 w-0 border-y-[5px] border-l-[8px] border-y-transparent border-l-white" />
-          )}
-        </span>
-        {playing ? "Pause video" : "Play video"}
-      </button>
     </>
   );
 }

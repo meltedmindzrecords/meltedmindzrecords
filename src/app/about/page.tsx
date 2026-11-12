@@ -100,7 +100,7 @@ export default async function AboutPage() {
                         alt={m.name}
                         fill
                         sizes="160px"
-                        className="object-cover grayscale"
+                        className="object-cover"
                         unoptimized={!isOptimizable(m.image)}
                       />
                     ) : (

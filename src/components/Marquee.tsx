@@ -72,25 +72,6 @@ export default function Marquee({
           {copy(true)}
         </div>
       </div>
-      <div
-        className={`marquee-toggle absolute inset-y-0 right-0 flex items-center pl-12 pr-3 sm:pr-5 ${
-          tone === "molten"
-            ? "bg-gradient-to-l from-molten from-60% to-transparent"
-            : "bg-gradient-to-l from-black from-60% to-transparent"
-        }`}
-      >
-        <button
-          type="button"
-          onClick={() => setPaused((p) => !p)}
-          aria-pressed={paused}
-          className={`caps rounded-full px-3 py-1.5 text-[10px] ${
-            tone === "molten" ? "bg-black text-white" : "bg-white text-black"
-          }`}
-        >
-          {paused ? "Play" : "Pause"}
-          <span className="sr-only"> scrolling names</span>
-        </button>
-      </div>
     </section>
   );
 }
