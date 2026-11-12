@@ -65,3 +65,62 @@ body {
   outline: 2px solid #fff;
   outline-offset: 3px;
 }
+
+/* ---------- /admin (website editor) ---------- */
+.admin-input {
+  display: block;
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  background: rgb(255 255 255 / 0.04);
+  padding: 0.7rem 0.9rem;
+  font-size: 16px;
+  color: #fff;
+}
+.admin-input:focus {
+  border-color: #ff8a5c;
+  outline: 2px solid #ff8a5c;
+  outline-offset: 1px;
+}
+.admin-input option {
+  background: #18181b;
+}
+.admin-btn {
+  display: inline-block;
+  border-radius: 9999px;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  padding: 0.55rem 1.1rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  transition: background 0.15s, border-color 0.15s;
+}
+.admin-btn:hover {
+  background: rgb(255 255 255 / 0.1);
+}
+.admin-btn:disabled {
+  opacity: 0.6;
+}
+.admin-btn-primary {
+  border-color: #ff5a1f;
+  background: #ff5a1f;
+  color: #000;
+}
+.admin-btn-primary:hover {
+  background: #ff7a45;
+}
+.admin-btn-danger {
+  border-color: rgb(248 113 113 / 0.5);
+  color: #fecaca;
+}
+.admin-btn-danger:hover {
+  background: rgb(248 113 113 / 0.15);
+}
+.admin-btn-danger-solid {
+  border-color: #ef4444;
+  background: #dc2626;
+  color: #fff;
+}
+.admin-btn-danger-solid:hover {
+  background: #b91c1c;
+}

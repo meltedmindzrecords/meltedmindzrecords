@@ -53,6 +53,9 @@ export default function Navbar() {
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
   const solid = scrolled || open;
 
+  // The website editor (/admin) has its own header.
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <>
       <header
