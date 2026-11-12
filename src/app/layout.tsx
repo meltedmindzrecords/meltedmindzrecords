@@ -5,6 +5,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
+import { getSettings } from "@/lib/settings";
+import { chromeFrom } from "@/lib/settingsSchema";
 
 // Atlantic-style display face: a variable grotesk, set tall and condensed.
 const display = Roboto_Flex({
@@ -18,25 +20,35 @@ const body = Inter_Tight({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://www.meltedmindzrecords.com"),
-  title: {
-    default: "Melted Mindz Records",
-    template: "%s | Melted Mindz Records",
-  },
-  description:
-    "Melted Mindz Records is an independent record label from Birmingham, Alabama. Artists keep their rights.",
-};
+// Title, description and share image are edited at /admin/settings.
+export async function generateMetadata(): Promise<Metadata> {
+  const s = await getSettings();
+  return {
+    metadataBase: new URL("https://www.meltedmindzrecords.com"),
+    title: {
+      default: s.seo_title,
+      template: "%s | Melted Mindz Records",
+    },
+    description: s.seo_description,
+    ...(s.seo_image
+      ? {
+          openGraph: { title: s.seo_title, description: s.seo_description, images: [s.seo_image] },
+          twitter: { card: "summary_large_image", images: [s.seo_image] },
+        }
+      : {}),
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#000000",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const chrome = chromeFrom(await getSettings());
   return (
     <html
       lang="en"
@@ -54,11 +66,11 @@ export default function RootLayout({
       </head>
 
       <body className="relative flex min-h-screen flex-col bg-black text-white">
-        <Navbar />
+        <Navbar chrome={chrome} />
 
         <main className="flex-1">{children}</main>
 
-        <Footer />
+        <Footer chrome={chrome} />
 
         <RevealObserver />
         <div className="grain" aria-hidden="true" />

@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import type { Release } from "@/lib/content";
 import { isOptimizable, listenLink } from "@/lib/content";
+import Tall from "@/components/Tall";
 
 /** Release as an image card: cover first, then a few words under it. */
 export default function ReleaseCard({
@@ -40,9 +41,9 @@ export default function ReleaseCard({
       <p className="caps mt-4 min-h-[2.8em] text-[11px] leading-[1.4] text-white/60 sm:min-h-0">
         {[release.type, release.releaseDate].filter(Boolean).join(" · ")}
       </p>
-      <h3 className="display mt-2 line-clamp-2 break-words text-[1.6rem] leading-[1] transition group-hover:text-molten sm:text-[2.2rem]">{release.title}</h3>
+      <h3 className="display mt-2 line-clamp-2 break-words text-[1.6rem] leading-[1] transition group-hover:text-molten sm:text-[2.2rem]"><Tall>{release.title}</Tall></h3>
       {showArtist && release.artist && (
-        <p className="caps mt-1.5 truncate text-[13px] text-white/75">{release.artist}</p>
+        <p className="caps mt-1.5 truncate text-[13px] text-white/75"><Tall>{release.artist}</Tall></p>
       )}
     </>
   );

@@ -1,6 +1,14 @@
 import Link from "next/link";
 
-export default function CareersPage() {
+import { getListings } from "@/lib/content";
+import { getSettings } from "@/lib/settings";
+
+// Openings are edited at /admin/careers; refresh at most once a minute.
+export const revalidate = 60;
+
+export default async function CareersPage() {
+  const [s, openings] = await Promise.all([getSettings(), getListings("career")]);
+  const roles = s.careers_future_roles.split("\n").map((r) => r.trim()).filter(Boolean);
   return (
     <main className="min-h-screen bg-black px-6 pb-24 pt-32 text-white">
 
@@ -11,8 +19,7 @@ export default function CareersPage() {
         </h1>
 
         <p className="mx-auto mt-6 max-w-3xl text-lg text-zinc-400">
-          Join a growing independent record label focused on developing artists,
-          building creative opportunities, and shaping the future of music.
+          {s.careers_intro}
         </p>
       </section>
 
@@ -72,27 +79,47 @@ export default function CareersPage() {
           Current Opportunities
         </h2>
 
+        {openings && openings.length > 0 ? (
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            {openings.map((o) => (
+              <div key={o.id} className="rounded-2xl border border-zinc-800 bg-zinc-950 p-8">
+                <h3 className="text-xl font-semibold">{o.title}</h3>
+                {o.details && <p className="mt-2 text-sm text-zinc-400">{o.details}</p>}
+                {o.description && <p className="mt-3 whitespace-pre-line text-zinc-400">{o.description}</p>}
+                {o.applyUrl && (
+                  <a
+                    href={o.applyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-6 inline-block rounded-lg border border-white px-6 py-2.5 font-semibold transition hover:bg-white hover:text-black"
+                  >
+                    Apply<span className="sr-only">: {o.title}</span>
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
         <div className="mt-8 rounded-2xl border border-zinc-800 bg-zinc-950 p-8">
 
           <h3 className="text-xl font-semibold">
-            No Current Open Positions
+            {s.careers_none_title}
           </h3>
 
           <p className="mt-3 text-zinc-400">
-            We are always interested in connecting with talented individuals.
-            Future opportunities may include:
+            {s.careers_none_text}
           </p>
 
-          <ul className="mt-5 list-disc space-y-2 pl-5 text-zinc-300">
-            <li>A&R Representatives</li>
-            <li>Marketing & Social Media Coordinators</li>
-            <li>Graphic Designers</li>
-            <li>Video Editors</li>
-            <li>Music Business Assistants</li>
-            <li>Web Development & Technology Roles</li>
-          </ul>
+          {roles.length > 0 && (
+            <ul className="mt-5 list-disc space-y-2 pl-5 text-zinc-300">
+              {roles.map((r) => (
+                <li key={r}>{r}</li>
+              ))}
+            </ul>
+          )}
 
         </div>
+        )}
 
       </section>
 

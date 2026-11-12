@@ -20,6 +20,8 @@ export type Artist = {
   youtubeUrl: string | null;
   instagramUrl: string | null;
   tiktokUrl: string | null;
+  /** Old page addresses that now redirect to this artist. */
+  previousSlugs?: string[];
 };
 
 export type TeamMember = {
@@ -148,6 +150,10 @@ export const fallbackReleases: Release[] = [
 
 let client: SupabaseClient | null | undefined;
 
+export function getSupabaseClient(): SupabaseClient | null {
+  return getClient();
+}
+
 function getClient(): SupabaseClient | null {
   if (client !== undefined) return client;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -231,6 +237,9 @@ export async function getArtists(): Promise<Artist[]> {
         youtubeUrl: opt(r.youtube_url),
         instagramUrl: opt(r.instagram_url),
         tiktokUrl: opt(r.tiktok_url),
+        previousSlugs: Array.isArray(r.previous_slugs)
+          ? (r.previous_slugs as unknown[]).filter((s): s is string => typeof s === "string" && s !== "")
+          : [],
       };
     })
     .filter((a) => a.name && a.slug);
@@ -240,6 +249,19 @@ export async function getArtists(): Promise<Artist[]> {
 export async function getArtist(slug: string): Promise<Artist | null> {
   const artists = await getArtists();
   return artists.find((a) => a.slug === slug) ?? null;
+}
+
+/** The artist whose OLD page address this was (their page moved), if any. */
+export async function findMovedArtist(slug: string): Promise<Artist | null> {
+  const artists = await getArtists();
+  if (artists.some((a) => a.slug === slug)) return null;
+  return artists.find((a) => a.previousSlugs?.includes(slug)) ?? null;
+}
+
+/** Scheduled rows (publish_at in the future) stay off the site until their time. */
+function isLive(r: Row): boolean {
+  const at = typeof r.publish_at === "string" ? Date.parse(r.publish_at) : NaN;
+  return Number.isNaN(at) || at <= Date.now();
 }
 
 export async function getTeam(): Promise<TeamMember[]> {
@@ -256,14 +278,19 @@ export async function getTeam(): Promise<TeamMember[]> {
   return team.length > 0 ? team : fallbackTeam;
 }
 
-export async function getReleases(): Promise<Release[]> {
-  const rows = await fetchRows("releases");
-  if (!rows) return fallbackReleases;
-  // Newest first by release date (undated ones go last, keeping CMS order).
-  const dated = rows
-    .map((r, i) => ({ r, i, t: Date.parse(str(r.release_date)) || 0 }))
-    .sort((a, b) => b.t - a.t || a.i - b.i)
-    .map((x) => x.r);
+export async function getReleases(order: "date" | "manual" = "date"): Promise<Release[]> {
+  const fetched = await fetchRows("releases");
+  const rows = fetched?.filter(isLive) ?? null;
+  if (!rows || rows.length === 0) return fallbackReleases;
+  // Newest first by release date (undated ones go last, keeping CMS order),
+  // or the admin's own drag order when "My order" is chosen.
+  const dated =
+    order === "manual"
+      ? rows
+      : rows
+          .map((r, i) => ({ r, i, t: Date.parse(str(r.release_date)) || 0 }))
+          .sort((a, b) => b.t - a.t || a.i - b.i)
+          .map((x) => x.r);
   const releases = dated
     .map((r) => {
       const title = str(r.title);
@@ -289,9 +316,17 @@ export async function getReleases(): Promise<Release[]> {
   return releases.length > 0 ? releases : fallbackReleases;
 }
 
-/** The featured release: first row marked featured, else the first row. */
-export function pickFeatured(releases: Release[]): Release {
-  return releases.find((r) => r.featured) ?? releases[0];
+/**
+ * The featured release: the one picked in /admin/homepage, else the first row
+ * marked featured, else the newest.
+ */
+export function pickFeatured(releases: Release[], choice = "auto"): Release {
+  const picked = choice && choice !== "auto" ? releases.find((r) => r.slug === choice) : undefined;
+  if (picked) return picked;
+  const newest = [...releases].sort(
+    (a, b) => (Date.parse(b.releaseDate) || 0) - (Date.parse(a.releaseDate) || 0)
+  );
+  return releases.find((r) => r.featured) ?? newest[0] ?? releases[0];
 }
 
 /**
@@ -410,8 +445,9 @@ function formatShortDate(v: unknown): string {
 }
 
 export async function getNews(): Promise<NewsItem[]> {
-  const rows = await fetchRows("news");
-  if (!rows) return fallbackNews;
+  const fetched = await fetchRows("news");
+  const rows = fetched?.filter(isLive) ?? null;
+  if (!rows || rows.length === 0) return fallbackNews;
   const items = rows
     .map((r) => {
       const title = str(r.title);
@@ -427,4 +463,48 @@ export async function getNews(): Promise<NewsItem[]> {
     })
     .filter((n) => n.title);
   return items.length > 0 ? items : fallbackNews;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Careers + internship listings (table: public.listings)              */
+/* ------------------------------------------------------------------ */
+
+export type Listing = {
+  id: number;
+  title: string;
+  description: string;
+  details: string;
+  applyUrl: string | null;
+};
+
+/** Visible listings of one kind, in admin order. null = the table couldn't be read (use the built-in text). */
+export async function getListings(kind: "career" | "internship"): Promise<Listing[] | null> {
+  const supabase = getClient();
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase
+      .from("listings")
+      .select("*")
+      .eq("kind", kind)
+      .eq("visible", true)
+      .order("sort_order", { ascending: true })
+      .order("id", { ascending: true });
+    if (error) {
+      console.warn(`[cms] listings: ${error.message} (using built-in content)`);
+      return null;
+    }
+    return (data as Row[])
+      .map((r) => ({
+        id: Number(r.id),
+        title: str(r.title),
+        description: str(r.description),
+        details: str(r.details),
+        applyUrl: opt(r.apply_url),
+      }))
+      .filter((l) => l.title);
+  } catch (err) {
+    console.warn("[cms] listings unreachable (using built-in content)", err);
+    return null;
+  }
 }

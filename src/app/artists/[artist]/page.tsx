@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 
 import ArtistCard from "@/components/ArtistCard";
 import Marquee from "@/components/Marquee";
@@ -11,12 +11,14 @@ import SectionHead from "@/components/SectionHead";
 import VinylCover from "@/components/VinylCover";
 import { SocialIcons, StreamButtons, present } from "@/components/LinkButtons";
 import {
+  findMovedArtist,
   getArtist,
   getArtists,
   getReleases,
   isOptimizable,
   releasesFor,
 } from "@/lib/content";
+import Tall from "@/components/Tall";
 
 // Content is edited in Supabase; refresh at most once a minute.
 export const revalidate = 60;
@@ -47,7 +49,12 @@ export default async function ArtistProfile({ params }: Props) {
     getReleases(),
   ]);
 
-  if (!info) notFound();
+  if (!info) {
+    // The artist's page address changed in /admin: send old links to the new page.
+    const moved = await findMovedArtist(artist);
+    if (moved) permanentRedirect(`/artists/${moved.slug}`);
+    notFound();
+  }
 
   // Streaming + social links share one row of small round icons; empty links are hidden.
   const links = [
@@ -85,7 +92,7 @@ export default async function ArtistProfile({ params }: Props) {
           <p className="rise caps text-[12px] text-molten sm:text-[13px]">Melted Mindz Records</p>
           <h1 className="display mt-3 overflow-hidden break-words pb-[0.04em] text-[23vw] sm:text-[15vw] lg:text-[14rem]">
             <span className="rise block" style={{ ["--d" as string]: "120ms" }}>
-              {info.name}
+              <Tall>{info.name}</Tall>
             </span>
           </h1>
           {info.genre && (

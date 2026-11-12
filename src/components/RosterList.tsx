@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import type { Artist } from "@/lib/content";
 import { isOptimizable } from "@/lib/content";
+import Tall from "@/components/Tall";
 
 /**
  * Atlantic-style roster: every artist name stacked in huge type, one per line.
@@ -27,7 +28,7 @@ export default function RosterList({ artists }: { artists: Artist[] }) {
                 {String(i + 1).padStart(2, "0")}
               </p>
               <h3 className="display break-words text-[15vw] text-white/90 transition duration-300 group-hover:translate-x-2 group-hover:text-molten sm:text-[10vw] lg:text-[8.5rem]">
-                {artist.name}
+                <Tall>{artist.name}</Tall>
               </h3>
               {artist.genre && (
                 <p className="caps mt-2 text-[11px] text-white/60 sm:text-[12px]">{artist.genre}</p>

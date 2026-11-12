@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import type { Artist } from "@/lib/content";
 import { isOptimizable } from "@/lib/content";
+import Tall from "@/components/Tall";
 
 /** Atlantic-style roster tile: a big photo with the name set over it. */
 export default function ArtistCard({
@@ -46,7 +47,7 @@ export default function ArtistCard({
             compact ? "text-[2rem] sm:text-[2.6rem]" : "text-[3.4rem] sm:text-[3.6rem] lg:text-[4.2rem]"
           }`}
         >
-          {artist.name}
+          <Tall>{artist.name}</Tall>
         </h3>
         {artist.genre && !compact && (
           <p className="caps mt-2 text-[11px] text-white/80">{artist.genre}</p>

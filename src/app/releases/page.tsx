@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import ReleaseCard from "@/components/ReleaseCard";
 import Reveal from "@/components/Reveal";
 import { getReleases } from "@/lib/content";
+import { getSettings } from "@/lib/settings";
 
 // Content is edited in Supabase; refresh at most once a minute.
 export const revalidate = 60;
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
 };
 
 export default async function ReleasesPage() {
-  const releases = await getReleases();
+  const settings = await getSettings();
+  const releases = await getReleases(settings.releases_order === "manual" ? "manual" : "date");
 
   return (
     <>

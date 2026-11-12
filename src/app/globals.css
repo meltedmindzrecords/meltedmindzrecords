@@ -320,3 +320,53 @@ html.js .reveal-color.is-in img {
 .admin-btn-danger-solid:hover {
   background: #b91c1c;
 }
+
+/* Website editor: no film grain, compact reorder arrows */
+body:has(.admin) .grain,
+html.is-admin .grain {
+  display: none;
+}
+.admin-arrow {
+  display: flex;
+  height: 2rem;
+  width: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(255 255 255 / 0.15);
+  font-size: 15px;
+  color: rgb(255 255 255 / 0.85);
+}
+.admin-arrow:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.1);
+}
+.admin-arrow:disabled {
+  opacity: 0.25;
+}
+.admin-arrow:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Digits as tall as the capitals in the display face (B1AK3) */
+.display .fig {
+  display: inline-block;
+  transform: scaleY(1.07);
+  transform-origin: 50% 100%;
+}
+.admin-btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 13.5px;
+  white-space: nowrap;
+}
+.admin-btn-block {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+@media (min-width: 640px) {
+  .admin-btn-sm:not(.admin-btn-block) {
+    padding: 0.55rem 1.1rem;
+    font-size: 14px;
+  }
+}

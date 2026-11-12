@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import { LinkIcon } from "@/components/Icons";
 import { ARTIST_TOOLS_URL, CONTACT_EMAIL, GET_SIGNED_URL, labelSocials } from "@/lib/site";
+import type { SiteChrome } from "@/lib/settingsSchema";
 
 const explore = [
   { href: "/artists", label: "Artists" },
@@ -30,7 +31,12 @@ const legal = [
   { href: "/do-not-sell", label: "Do Not Sell or Share My Personal Information" },
 ];
 
-export default function Footer() {
+export default function Footer({ chrome }: { chrome?: SiteChrome }) {
+  const socials = chrome?.socials ?? labelSocials;
+  const demoUrl = chrome?.demoUrl ?? GET_SIGNED_URL;
+  const toolsUrl = chrome?.artistToolsUrl ?? ARTIST_TOOLS_URL;
+  const contactEmail = chrome?.contactEmail ?? CONTACT_EMAIL;
+  const footerText = chrome?.footerText ?? "Melted Mindz Records. Birmingham, Alabama.";
   const pathname = usePathname();
   const [email, setEmail] = useState("");
   const [marketingConsent, setMarketingConsent] = useState(false);
@@ -121,7 +127,7 @@ export default function Footer() {
 
         {/* Follow */}
         <div className="mt-12 flex gap-6">
-          {labelSocials.map((s) => (
+          {socials.map((s) => (
             <a
               key={s.label}
               href={s.href}
@@ -145,13 +151,13 @@ export default function Footer() {
             </li>
           ))}
           <li>
-            <a href={ARTIST_TOOLS_URL} className="caps text-[13px] text-white/75 hover:text-white">
+            <a href={toolsUrl} className="caps text-[13px] text-white/75 hover:text-white">
               For Artists
             </a>
           </li>
           <li>
             <a
-              href={GET_SIGNED_URL}
+              href={demoUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="caps text-[13px] text-white/75 hover:text-white"
@@ -161,9 +167,11 @@ export default function Footer() {
           </li>
         </ul>
 
-        <a href={`mailto:${CONTACT_EMAIL}`} className="mt-6 text-sm text-white/60 hover:text-white">
-          {CONTACT_EMAIL}
-        </a>
+        {contactEmail && (
+          <a href={`mailto:${contactEmail}`} className="mt-6 text-sm text-white/60 hover:text-white">
+            {contactEmail}
+          </a>
+        )}
 
         <div className="mt-14 flex w-full flex-col items-center gap-5 border-t border-white/15 pt-8">
           <Image
@@ -183,7 +191,7 @@ export default function Footer() {
             ))}
           </ul>
           <p className="text-xs text-white/50">
-            © {new Date().getFullYear()} Melted Mindz Records. Birmingham, Alabama.
+            © {new Date().getFullYear()} {footerText}
           </p>
         </div>
       </div>

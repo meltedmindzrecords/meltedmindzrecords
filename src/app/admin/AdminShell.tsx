@@ -7,7 +7,13 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 import { getBrowserSupabase } from "@/lib/supabaseBrowser";
 
-type AdminCtx = { supabase: SupabaseClient; session: Session; email: string };
+type AdminCtx = {
+  supabase: SupabaseClient;
+  session: Session;
+  email: string;
+  /** Ask the site to rebuild its pages now (otherwise they refresh within a minute). */
+  refreshSite: () => Promise<boolean>;
+};
 const Ctx = createContext<AdminCtx | null>(null);
 
 export function useAdmin(): AdminCtx {
@@ -17,17 +23,30 @@ export function useAdmin(): AdminCtx {
 }
 
 const nav = [
-  { href: "/admin", label: "Overview" },
+  { href: "/admin", label: "Dashboard" },
+  { href: "/admin/homepage", label: "Homepage" },
+  { href: "/admin/settings", label: "Settings" },
   { href: "/admin/artists", label: "Artists" },
   { href: "/admin/releases", label: "Releases" },
   { href: "/admin/news", label: "News" },
   { href: "/admin/team", label: "Team" },
+  { href: "/admin/careers", label: "Careers" },
+  { href: "/admin/internships", label: "Internships" },
+  { href: "/admin/media", label: "Media" },
+  { href: "/admin/newsletter", label: "Newsletter" },
+  { href: "/admin/activity", label: "Activity" },
 ];
 
 type State = "loading" | "signed-out" | "checking" | "not-admin" | "admin" | "no-config" | "set-password";
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+
+  // No film grain over the editor.
+  useEffect(() => {
+    document.documentElement.classList.add("is-admin");
+    return () => document.documentElement.classList.remove("is-admin");
+  }, []);
   const [supabase] = useState(() => getBrowserSupabase());
   const [session, setSession] = useState<Session | null>(null);
   const [state, setState] = useState<State>(supabase ? "loading" : "no-config");
@@ -112,7 +131,24 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     );
   } else {
     body = (
-      <Ctx.Provider value={{ supabase: supabase!, session: session!, email: session?.user.email ?? "" }}>
+      <Ctx.Provider
+        value={{
+          supabase: supabase!,
+          session: session!,
+          email: session?.user.email ?? "",
+          refreshSite: async () => {
+            try {
+              const res = await fetch("/api/revalidate", {
+                method: "POST",
+                headers: { Authorization: `Bearer ${session?.access_token ?? ""}` },
+              });
+              return res.ok;
+            } catch {
+              return false;
+            }
+          },
+        }}
+      >
         {children}
       </Ctx.Provider>
     );
@@ -141,13 +177,17 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             )}
           </div>
           {state === "admin" && (
-            <nav aria-label="Admin sections" className="no-scrollbar -mx-1 flex w-full gap-1 overflow-x-auto">
+            <nav
+              aria-label="Admin sections"
+              className="no-scrollbar -mx-1 flex w-full gap-1 overflow-x-auto [mask-image:linear-gradient(to_right,#000_85%,transparent)] sm:[mask-image:none]"
+            >
               {nav.map((n) => {
                 const active = n.href === "/admin" ? pathname === "/admin" : pathname?.startsWith(n.href);
                 return (
                   <Link
                     key={n.href}
                     href={n.href}
+                    ref={active ? (el) => el?.scrollIntoView({ block: "nearest", inline: "center" }) : undefined}
                     aria-current={active ? "page" : undefined}
                     className={`shrink-0 rounded-full px-4 py-2 text-[14px] font-medium transition ${
                       active ? "bg-white text-black" : "text-white/75 hover:bg-white/10 hover:text-white"

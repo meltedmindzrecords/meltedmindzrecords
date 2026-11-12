@@ -1,11 +1,13 @@
-import {
-  FaInstagram,
-  FaXTwitter,
-  FaYoutube,
-  FaTiktok,
-} from "react-icons/fa6";
+import { LinkIcon } from "@/components/Icons";
+import { getSettings } from "@/lib/settings";
+import { socialLinks } from "@/lib/settingsSchema";
 
-export default function Contact() {
+// Contact details are edited at /admin/settings; refresh at most once a minute.
+export const revalidate = 60;
+
+export default async function Contact() {
+  const s = await getSettings();
+  const socials = socialLinks(s, "contact");
   return (
     <main className="min-h-screen bg-black text-white">
 
@@ -21,9 +23,7 @@ export default function Contact() {
           </h1>
 
           <p className="mt-8 max-w-2xl text-lg leading-8 text-white/60 sm:text-xl">
-            For business inquiries, artist-related matters, media inquiries,
-            partnerships, and general questions, contact the Melted Mindz
-            Records team.
+            {s.contact_intro}
           </p>
         </div>
       </section>
@@ -49,16 +49,18 @@ export default function Contact() {
             </p>
 
             <div className="mt-10">
+              {s.contact_email && (
               <a
-                href="mailto:info@meltedmindzrecords.com"
+                href={`mailto:${s.contact_email}`}
                 className="group inline-flex items-center border-b border-white/30 pb-2 text-lg font-medium transition hover:border-white"
               >
-                info@meltedmindzrecords.com
+                {s.contact_email}
 
                 <span className="ml-3 text-white/40 transition-transform group-hover:translate-x-1">
                   →
                 </span>
               </a>
+              )}
             </div>
           </div>
 
@@ -75,12 +77,35 @@ export default function Contact() {
                 </p>
 
                 <a
-                  href="mailto:info@meltedmindzrecords.com"
+                  href={`mailto:${s.contact_email}`}
                   className="mt-2 block break-all text-base text-white transition hover:text-white/60"
                 >
-                  info@meltedmindzrecords.com
+                  {s.contact_email}
                 </a>
               </div>
+
+              {s.contact_phone && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
+                    Phone
+                  </p>
+                  <a
+                    href={`tel:${s.contact_phone.replace(/[^\d+]/g, "")}`}
+                    className="mt-2 block text-base text-white transition hover:text-white/60"
+                  >
+                    {s.contact_phone}
+                  </a>
+                </div>
+              )}
+
+              {s.contact_address && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
+                    Address
+                  </p>
+                  <p className="mt-2 whitespace-pre-line text-base leading-7 text-white">{s.contact_address}</p>
+                </div>
+              )}
 
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
@@ -88,9 +113,7 @@ export default function Contact() {
                 </p>
 
                 <p className="mt-2 text-sm leading-6 text-white/50">
-                  Melted Mindz Records does not accept unsolicited demos.
-                  Please use the appropriate submission process when
-                  available.
+                  {s.contact_submissions}
                 </p>
               </div>
 
@@ -100,8 +123,7 @@ export default function Contact() {
                 </p>
 
                 <p className="mt-2 text-sm leading-6 text-white/50">
-                  Please allow reasonable time for our team to review and
-                  respond to your inquiry.
+                  {s.contact_response}
                 </p>
               </div>
 
@@ -120,47 +142,18 @@ export default function Contact() {
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
-
-            <a
-              href="https://www.instagram.com/meltedmindzrecords"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-              className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
-            >
-              <FaInstagram className="text-lg" />
-            </a>
-
-            <a
-              href="https://x.com/mindzlabel"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="X"
-              className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
-            >
-              <FaXTwitter className="text-lg" />
-            </a>
-
-            <a
-              href="https://www.youtube.com/@meltedmindzrecords"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="YouTube"
-              className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
-            >
-              <FaYoutube className="text-lg" />
-            </a>
-
-            <a
-              href="https://www.tiktok.com/@meltedmindzrecords"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="TikTok"
-              className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
-            >
-              <FaTiktok className="text-lg" />
-            </a>
-
+            {socials.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={l.label}
+                className="flex h-12 w-12 items-center justify-center border border-white/10 transition hover:border-white/40 hover:bg-white/5"
+              >
+                <LinkIcon label={l.label} className="text-lg" />
+              </a>
+            ))}
           </div>
 
         </div>

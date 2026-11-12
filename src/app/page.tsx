@@ -16,7 +16,8 @@ import {
   pickFeatured,
   releasesFor,
 } from "@/lib/content";
-import { GET_SIGNED_URL } from "@/lib/site";
+import { getSettings } from "@/lib/settings";
+import Tall from "@/components/Tall";
 
 // Content is edited in Supabase; refresh at most once a minute.
 export const revalidate = 60;
@@ -27,8 +28,10 @@ const line =
   "caps inline-flex items-center gap-2 border border-white px-8 py-4 text-[14px] text-white transition hover:-translate-y-0.5 hover:bg-white hover:text-black";
 
 export default async function Home() {
-  const [artists, releases] = await Promise.all([getArtists(), getReleases()]);
-  const featured = pickFeatured(releases);
+  const [artists, settings] = await Promise.all([getArtists(), getSettings()]);
+  const releases = await getReleases(settings.releases_order === "manual" ? "manual" : "date");
+  const s = settings;
+  const featured = pickFeatured(releases, s.featured_release);
   const featuredArtist = featured ? artistFor(featured, artists) : null;
   const featuredListen = featured ? listenLink(featured) : null;
   const roster = [...artists].sort((a, b) => a.name.localeCompare(b.name));
@@ -37,8 +40,10 @@ export default async function Home() {
   const lead = featured;
   const leadArtist = lead ? artistFor(lead, artists) : null;
 
-  // Spotlight: the artist behind the featured release, else the first artist in the CMS order.
-  const spot = featuredArtist ?? artists[0] ?? null;
+  // Spotlight: the artist picked in /admin/homepage, else the artist behind the
+  // featured release, else the first artist in the CMS order.
+  const picked = s.spotlight_artist !== "auto" ? artists.find((a) => a.slug === s.spotlight_artist) : undefined;
+  const spot = picked ?? featuredArtist ?? artists[0] ?? null;
   const spotReleases = spot ? releasesFor(spot, releases) : [];
   const spotLinks = spot
     ? [
@@ -61,8 +66,8 @@ export default async function Home() {
       {/* HERO: the crowd video, the newest release in huge type */}
       <section className="relative flex min-h-[100svh] items-end overflow-hidden bg-black">
         <HeroVideo
-          src="/videos/hero-web.mp4"
-          poster="/videos/hero-poster.jpg"
+          src={s.hero_video}
+          poster={s.hero_poster}
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/30" />
@@ -74,16 +79,20 @@ export default async function Home() {
               <div className="min-w-0">
                 <p className="rise caps flex items-center gap-3 text-[12px] text-white sm:text-[13px]">
                   <span className="pulse-dot inline-block h-2.5 w-2.5 rounded-full bg-molten" aria-hidden="true" />
-                  Out now · {featured.type || "Release"}
-                  {featured.releaseDate ? ` · ${featured.releaseDate}` : ""}
+                  {s.hero_eyebrow || (
+                    <>
+                      Out now · {featured.type || "Release"}
+                      {featured.releaseDate ? ` · ${featured.releaseDate}` : ""}
+                    </>
+                  )}
                 </p>
                 <h1 className="display mt-5 overflow-hidden pb-[0.04em] text-[21vw] sm:text-[14vw] lg:text-[12.5rem]">
                   <span className="rise block" style={{ ["--d" as string]: "120ms" }}>
-                    {featured.title}
+                    <Tall>{s.hero_headline || featured.title}</Tall>
                   </span>
                 </h1>
                 <p className="rise caps mt-5 text-[18px] text-molten sm:text-[24px]" style={{ ["--d" as string]: "260ms" }}>
-                  {featured.artist}
+                  <Tall>{s.hero_subtext || featured.artist}</Tall>
                 </p>
                 <div className="rise mt-9 flex flex-wrap gap-3" style={{ ["--d" as string]: "380ms" }}>
                   {featuredListen && (
@@ -126,10 +135,10 @@ export default async function Home() {
       </section>
 
       {/* TICKER: artists and releases */}
-      <Marquee items={ticker} label="Artists and releases" />
+      {s.show_ticker && <Marquee items={ticker} label="Artists and releases" />}
 
       {/* LATEST RELEASES */}
-      {lead && (
+      {s.show_latest && lead && (
         <section aria-labelledby="latest-title" className="overflow-x-clip">
           <div className="mx-auto max-w-[1600px] px-5 py-24 sm:px-10 lg:py-36">
             <SectionHead
@@ -149,14 +158,14 @@ export default async function Home() {
                 <p className="caps text-[12px] text-white/70">
                   {[lead.type, lead.releaseDate].filter(Boolean).join(" · ")}
                 </p>
-                <h3 className="display mt-3 text-[4.6rem] sm:text-[6.5rem] lg:text-[8rem]">{lead.title}</h3>
+                <h3 className="display mt-3 text-[4.6rem] sm:text-[6.5rem] lg:text-[8rem]"><Tall>{lead.title}</Tall></h3>
                 <p className="caps mt-3 text-[17px] text-molten">
                   {leadArtist ? (
                     <Link href={`/artists/${leadArtist.slug}`} className="wipe pb-0.5">
-                      {lead.artist}
+                      <Tall>{lead.artist}</Tall>
                     </Link>
                   ) : (
-                    lead.artist
+                    <Tall>{lead.artist}</Tall>
                   )}
                 </p>
                 {lead.shortDescription && (
@@ -187,7 +196,7 @@ export default async function Home() {
       )}
 
       {/* ARTIST SPOTLIGHT */}
-      {spot && (
+      {s.show_spotlight && spot && (
         <section aria-labelledby="spotlight-title" className="relative overflow-hidden border-y border-white/10 bg-[#0d0504]">
           <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_15%_40%,rgba(255,61,46,0.28),transparent_60%)]" />
           <div className="relative mx-auto max-w-[1600px] px-5 py-24 sm:px-10 lg:py-36">
@@ -212,7 +221,7 @@ export default async function Home() {
               <Reveal delay={120} className="min-w-0">
                 {spot.genre && <p className="caps text-[12px] text-white/70 sm:text-[13px]">{spot.genre}</p>}
                 <h3 className="display mt-3 break-words text-[17vw] sm:text-[8rem] lg:text-[9.5rem]">
-                  {spot.name}
+                  <Tall>{spot.name}</Tall>
                 </h3>
                 {spot.bio && (
                   <p className="mt-7 max-w-xl text-[19px] leading-[1.6] text-white/80 sm:text-[21px]">{spot.bio}</p>
@@ -235,7 +244,7 @@ export default async function Home() {
       )}
 
       {/* ARTISTS: link to the full roster */}
-      {roster.length > 0 && (
+      {s.show_all_artists && roster.length > 0 && (
         <section aria-label="Our artists" className="mx-auto max-w-[1600px] px-5 py-16 text-center sm:px-10 lg:py-24">
           <Link href="/artists" className={hot}>
             See all artists <span aria-hidden="true">→</span>
@@ -244,17 +253,24 @@ export default async function Home() {
       )}
 
       {/* THE LABEL */}
+      {s.show_label && (
       <section className="relative overflow-hidden">
         <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_120%,rgba(255,61,46,0.3),transparent_60%)]" />
         <div className="relative mx-auto max-w-[1600px] px-5 py-28 text-center sm:px-10 lg:py-40">
           <Reveal>
-            <p className="caps text-[13px] text-molten">The label</p>
+            <p className="caps text-[13px] text-molten">{s.label_eyebrow}</p>
             <p className="display mx-auto mt-6 max-w-5xl text-[2.9rem] sm:text-[4.6rem] lg:text-[6.2rem]">
-              An independent label from Birmingham, Alabama. <span className="text-melt">Our artists keep their rights.</span>
+              {s.label_text}
+              {s.tagline && (
+                <>
+                  {" "}
+                  <span className="text-melt">{s.tagline}</span>
+                </>
+              )}
             </p>
           </Reveal>
           <Reveal delay={150} className="mt-12 flex flex-wrap justify-center gap-3">
-            <a href={GET_SIGNED_URL} target="_blank" rel="noopener noreferrer" className={hot}>
+            <a href={s.demo_url} target="_blank" rel="noopener noreferrer" className={hot}>
               Get signed <span aria-hidden="true">↗</span>
             </a>
             <Link href="/about" className={line}>
@@ -263,6 +279,7 @@ export default async function Home() {
           </Reveal>
         </div>
       </section>
+      )}
     </>
   );
 }

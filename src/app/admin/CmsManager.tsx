@@ -24,10 +24,11 @@ export default function CmsManager({ config }: { config: CmsConfig }) {
   const [toast, setToast] = useState<Toast>(null);
   const [artistNames, setArtistNames] = useState<string[]>([]);
 
+  const filterKey = JSON.stringify(config.filter ?? {});
   const load = useCallback(async () => {
-    const { data, error } = await supabase
-      .from(config.table)
-      .select("*")
+    let query = supabase.from(config.table).select("*");
+    for (const [k, v] of Object.entries(JSON.parse(filterKey) as Record<string, string>)) query = query.eq(k, v);
+    const { data, error } = await query
       .order("sort_order", { ascending: true })
       .order("id", { ascending: true });
     if (error) {
@@ -37,11 +38,14 @@ export default function CmsManager({ config }: { config: CmsConfig }) {
       setLoadError("");
       setRows((data ?? []) as Row[]);
     }
-  }, [supabase, config.table]);
+  }, [supabase, config.table, filterKey]);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  // Dashboard quick links open the "new" form directly (?new=1).
+  const openedNew = useRef(false);
 
   useEffect(() => {
     if (!config.fields.some((f) => f.type === "artist")) return;
@@ -80,11 +84,50 @@ export default function CmsManager({ config }: { config: CmsConfig }) {
     await load();
   };
 
-  const startNew = () => {
+  const startNew = useCallback(() => {
     const maxOrder = Math.max(0, ...(rows ?? []).map((r) => Number(r.sort_order) || 0));
-    const blank: Row = { visible: true, sort_order: maxOrder + 10 };
+    const blank: Row = { visible: true, sort_order: maxOrder + 10, ...(config.filter ?? {}) };
     for (const f of config.fields) if (f.type === "bool" && f.key !== "visible") blank[f.key] = false;
     setEditing(blank);
+  }, [rows, config]);
+
+  useEffect(() => {
+    if (openedNew.current || rows === null) return;
+    if (new URLSearchParams(window.location.search).get("new") === "1") {
+      openedNew.current = true;
+      startNew();
+    }
+  }, [rows, startNew]);
+
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [savingOrder, setSavingOrder] = useState(false);
+
+  /** Saves a new order: rows get 10, 20, 30… and only changed rows are written. */
+  const saveOrder = async (next: Row[]) => {
+    setRows(next);
+    setSavingOrder(true);
+    const changes = next
+      .map((r, i) => ({ r, order: (i + 1) * 10 }))
+      .filter(({ r, order }) => Number(r.sort_order) !== order);
+    const results = await Promise.all(
+      changes.map(({ r, order }) => supabase.from(config.table).update({ sort_order: order }).eq("id", r.id!))
+    );
+    setSavingOrder(false);
+    const failed = results.find((x) => x.error);
+    if (failed?.error) {
+      setToast({ kind: "error", text: `Couldn't save the new order: ${failed.error.message}` });
+      await load();
+      return;
+    }
+    if (changes.length > 0) await afterChange("New order saved");
+  };
+
+  const move = (from: number, to: number) => {
+    if (!rows || to < 0 || to >= rows.length || from === to) return;
+    const next = [...rows];
+    const [item] = next.splice(from, 1);
+    next.splice(to, 0, item);
+    saveOrder(next);
   };
 
   const confirmDelete = async () => {
@@ -145,12 +188,52 @@ export default function CmsManager({ config }: { config: CmsConfig }) {
             </div>
           ) : (
             <ul className="mt-8 divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
-              {rows.map((r) => {
+              {rows.map((r, i) => {
                 const img = config.imageKey ? previewSrc(r[config.imageKey]) : null;
                 const title = String(r[config.titleKey] ?? "(untitled)");
+                const scheduled = typeof r.publish_at === "string" && Date.parse(r.publish_at) > Date.now();
                 return (
-                  <li key={String(r.id)} className="flex items-center gap-4 p-3 sm:p-4">
-                    <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white/5 sm:h-16 sm:w-16">
+                  <li
+                    key={String(r.id)}
+                    draggable={!savingOrder}
+                    onDragStart={(e) => {
+                      setDragIndex(i);
+                      e.dataTransfer.effectAllowed = "move";
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = "move";
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (dragIndex !== null) move(dragIndex, i);
+                      setDragIndex(null);
+                    }}
+                    onDragEnd={() => setDragIndex(null)}
+                    className={`flex items-center gap-3 p-3 sm:gap-4 sm:p-4 ${dragIndex === i ? "opacity-40" : ""}`}
+                  >
+                    <div className="flex shrink-0 flex-col items-center gap-1">
+                      <span aria-hidden="true" title="Drag to reorder" className="hidden cursor-grab select-none text-[18px] leading-none text-white/40 sm:block">⋮⋮</span>
+                      <button
+                        type="button"
+                        onClick={() => move(i, i - 1)}
+                        disabled={i === 0 || savingOrder}
+                        aria-label={`Move ${title} up`}
+                        className="admin-arrow"
+                      >
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => move(i, i + 1)}
+                        disabled={i === rows.length - 1 || savingOrder}
+                        aria-label={`Move ${title} down`}
+                        className="admin-arrow"
+                      >
+                        ↓
+                      </button>
+                    </div>
+                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-white/5 sm:h-16 sm:w-16">
                       {img ? (
                         <img src={img} alt="" className="h-full w-full object-cover" />
                       ) : (
@@ -158,21 +241,34 @@ export default function CmsManager({ config }: { config: CmsConfig }) {
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[16px] font-semibold">{title}</p>
+                      <p className="line-clamp-2 break-words text-[15px] font-semibold leading-5 sm:text-[16px]">{title}</p>
                       <p className="truncate text-[13px] text-white/60">{config.subtitle(r)}</p>
                       <div className="mt-1 flex flex-wrap gap-2">
                         {r.visible === false && <Badge tone="muted">Hidden</Badge>}
+                        {scheduled && (
+                          <Badge tone="accent">Goes live {new Date(String(r.publish_at)).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}</Badge>
+                        )}
                         {r.featured === true && <Badge tone="accent">Homepage hero</Badge>}
                       </div>
+                      {config.viewUrl && r.visible !== false && !scheduled && (
+                        <a
+                          href={config.viewUrl(r)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-block text-[13px] text-[#ff8a5c] underline-offset-4 hover:underline"
+                        >
+                          View on site ↗<span className="sr-only"> ({title})</span>
+                        </a>
+                      )}
                     </div>
                     <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-                      <button type="button" onClick={() => setEditing(r)} className="admin-btn" aria-label={`Edit ${title}`}>
+                      <button type="button" onClick={() => setEditing(r)} className="admin-btn admin-btn-sm" aria-label={`Edit ${title}`}>
                         Edit
                       </button>
                       <button
                         type="button"
                         onClick={() => setDeleting(r)}
-                        className="admin-btn admin-btn-danger"
+                        className="admin-btn admin-btn-danger admin-btn-sm"
                         aria-label={`Delete ${title}`}
                       >
                         Delete
@@ -182,6 +278,13 @@ export default function CmsManager({ config }: { config: CmsConfig }) {
                 );
               })}
             </ul>
+          )}
+          {rows.length > 1 && (
+            <p className="mt-3 text-[13px] text-white/60" role="status">
+              {savingOrder
+                ? "Saving the new order…"
+                : `Drag rows to reorder, or use the ↑ ↓ arrows.${config.orderNote ? " " + config.orderNote : ""}`}
+            </p>
           )}
         </>
       )}
@@ -199,7 +302,7 @@ export default function CmsManager({ config }: { config: CmsConfig }) {
   );
 }
 
-function Badge({ tone, children }: { tone: "muted" | "accent"; children: React.ReactNode }) {
+export function Badge({ tone, children }: { tone: "muted" | "accent"; children: React.ReactNode }) {
   return (
     <span
       className={`rounded-full px-2 py-0.5 text-[12px] font-medium ${
@@ -211,18 +314,20 @@ function Badge({ tone, children }: { tone: "muted" | "accent"; children: React.R
   );
 }
 
-function ConfirmDialog({
+export function ConfirmDialog({
   title,
   body,
   confirmLabel,
   onCancel,
   onConfirm,
+  busyLabel = "Deleting…",
 }: {
   title: string;
   body: string;
   confirmLabel: string;
   onCancel: () => void;
   onConfirm: () => void;
+  busyLabel?: string;
 }) {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const [busy, setBusy] = useState(false);
@@ -256,7 +361,7 @@ function ConfirmDialog({
             }}
             className="admin-btn admin-btn-danger-solid"
           >
-            {busy ? "Deleting…" : confirmLabel}
+            {busy ? busyLabel : confirmLabel}
           </button>
         </div>
       </div>
@@ -294,12 +399,18 @@ function Editor({
       if (typeof v === "string") v = v.trim();
       if (f.type === "number") v = v === "" || v === undefined || v === null ? 100 : Number(v);
       if (f.type === "bool") v = v === true;
-      if ((f.type === "date" || f.type === "url" || f.type === "image") && v === "") v = null;
+      if ((f.type === "date" || f.type === "url" || f.type === "image" || f.type === "datetime") && v === "") v = null;
+      if (f.type === "datetime" && typeof v === "string" && v) {
+        const t = new Date(v); // a local "2026-11-20T09:00" from the picker, or a stored ISO time
+        v = Number.isNaN(t.getTime()) ? null : t.toISOString();
+      }
       payload[f.key] = v === undefined ? null : v;
     }
+    Object.assign(payload, config.filter ?? {});
     if (config.fields.some((f) => f.key === "slug") && !payload.slug) {
       payload.slug = slugify(String(payload[config.titleKey] ?? ""));
     }
+    if (typeof payload.slug === "string") payload.slug = slugify(payload.slug);
     const q = isNew
       ? supabase.from(config.table).insert(payload).select("id").single()
       : supabase.from(config.table).update(payload).eq("id", initial.id!).select("id").single();
@@ -345,7 +456,7 @@ function Editor({
   );
 }
 
-function FieldInput({
+export function FieldInput({
   field,
   value,
   onChange,
@@ -403,11 +514,17 @@ function FieldInput({
     );
   }
 
-  if (field.type === "image") {
+  if (field.type === "image" || field.type === "video") {
+    const isVideo = field.type === "video";
     const src = previewSrc(value);
     const upload = async (file: File) => {
-      if (!file.type.startsWith("image/")) return onError("That file isn't an image.");
-      if (file.size > 10 * 1024 * 1024) return onError("That image is over 10 MB. Try a smaller one.");
+      if (isVideo) {
+        if (!file.type.startsWith("video/")) return onError("That file isn't a video.");
+        if (file.size > 50 * 1024 * 1024) return onError("That video is over 50 MB. Export a smaller MP4 (720p is plenty).");
+      } else {
+        if (!file.type.startsWith("image/")) return onError("That file isn't an image.");
+        if (file.size > 10 * 1024 * 1024) return onError("That image is over 10 MB. Try a smaller one.");
+      }
       setUploading(true);
       const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
       const path = `${table}/${Date.now()}-${slugify(nameHint || file.name) || "image"}.${ext}`;
@@ -423,19 +540,21 @@ function FieldInput({
       <div>
         {label}
         <div className="mt-2 flex flex-wrap items-center gap-4">
-          <div className="h-28 w-28 overflow-hidden rounded-xl bg-white/5">
-            {src ? (
+          <div className={`overflow-hidden rounded-xl bg-white/5 ${isVideo ? "h-28 w-48" : "h-28 w-28"}`}>
+            {src && isVideo ? (
+              <video src={src} muted playsInline preload="metadata" aria-label={`Current ${field.label.toLowerCase()}`} className="h-full w-full object-cover" />
+            ) : src ? (
               <img src={src} alt={`Current ${field.label.toLowerCase()}`} className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-[12px] text-white/40">No image</div>
+              <div className="flex h-full w-full items-center justify-center text-[12px] text-white/40">{isVideo ? "No video" : "No image"}</div>
             )}
           </div>
           <div className="flex flex-col gap-2">
             <label className="admin-btn cursor-pointer text-center focus-within:outline focus-within:outline-2 focus-within:outline-white">
-              {uploading ? "Uploading…" : src ? "Replace image" : "Upload image"}
+              {uploading ? "Uploading…" : `${src ? "Replace" : "Upload"} ${isVideo ? "video" : "image"}`}
               <input
                 type="file"
-                accept="image/*"
+                accept={isVideo ? "video/mp4,video/quicktime,video/webm" : "image/*"}
                 className="sr-only"
                 disabled={uploading}
                 onChange={(e) => {
@@ -447,7 +566,7 @@ function FieldInput({
             </label>
             {src && (
               <button type="button" onClick={() => onChange(null)} className="text-left text-[13px] text-white/60 underline hover:text-white">
-                Remove image
+                {field.placeholder ? "Use the original" : `Remove ${isVideo ? "video" : "image"}`}
               </button>
             )}
           </div>
@@ -457,7 +576,7 @@ function FieldInput({
           type="text"
           value={str}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="or paste an image address"
+          placeholder={isVideo ? "or paste a video address" : "or paste an image address"}
           aria-describedby={helpId}
           className="admin-input mt-3"
         />
@@ -472,8 +591,9 @@ function FieldInput({
         {label}
         <textarea
           id={id}
-          rows={4}
+          rows={Math.min(10, Math.max(3, Math.ceil(str.length / 36) + 1))}
           value={str}
+          placeholder={field.placeholder}
           onChange={(e) => onChange(e.target.value)}
           aria-describedby={helpId}
           className="admin-input mt-1"
@@ -505,6 +625,38 @@ function FieldInput({
     );
   }
 
+  if (field.type === "datetime") {
+    // Shown and picked in the phone's own time zone; stored as an exact moment.
+    const local = (() => {
+      if (!str) return "";
+      const d = new Date(str);
+      if (Number.isNaN(d.getTime())) return str;
+      const p = (n: number) => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+    })();
+    return (
+      <div>
+        {label}
+        <div className="mt-1 flex gap-2">
+          <input
+            id={id}
+            type="datetime-local"
+            value={local}
+            onChange={(e) => onChange(e.target.value)}
+            aria-describedby={helpId}
+            className="admin-input"
+          />
+          {str && (
+            <button type="button" onClick={() => onChange("")} className="admin-btn shrink-0">
+              Clear
+            </button>
+          )}
+        </div>
+        {help}
+      </div>
+    );
+  }
+
   return (
     <div>
       {label}
@@ -514,7 +666,7 @@ function FieldInput({
         required={field.required}
         value={field.type === "date" ? str.slice(0, 10) : str}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={field.type === "url" ? "https://" : undefined}
+        placeholder={field.placeholder ?? (field.type === "url" ? "https://" : undefined)}
         aria-describedby={helpId}
         className="admin-input mt-1"
       />

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { ARTIST_TOOLS_URL, GET_SIGNED_URL, labelSocials } from "@/lib/site";
+import type { SiteChrome } from "@/lib/settingsSchema";
 import { LinkIcon } from "@/components/Icons";
 
 // Shown in the bar on desktop (Atlantic keeps the bar to a few words).
@@ -29,7 +30,10 @@ const secondary = [
   { href: "/internships", label: "Internships" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ chrome }: { chrome?: SiteChrome }) {
+  const socials = chrome?.socials ?? labelSocials;
+  const demoUrl = chrome?.demoUrl ?? GET_SIGNED_URL;
+  const toolsUrl = chrome?.artistToolsUrl ?? ARTIST_TOOLS_URL;
   const pathname = usePathname();
   // The menu remembers the page it was opened on, so it closes itself on navigation.
   const [openOn, setOpenOn] = useState<string | null>(null);
@@ -147,7 +151,7 @@ export default function Navbar() {
             </Link>
           ))}
           <a
-            href={ARTIST_TOOLS_URL}
+            href={toolsUrl}
             tabIndex={open ? 0 : -1}
             className="caps text-[13px] text-white/60 hover:text-white"
           >
@@ -157,7 +161,7 @@ export default function Navbar() {
 
         <div className="mt-auto flex w-full max-w-sm flex-col items-center pt-12">
           <a
-            href={GET_SIGNED_URL}
+            href={demoUrl}
             target="_blank"
             rel="noopener noreferrer"
             tabIndex={open ? 0 : -1}
@@ -166,7 +170,7 @@ export default function Navbar() {
             Get Signed
           </a>
           <div className="mt-7 flex gap-6">
-            {labelSocials.map((s) => (
+            {socials.map((s) => (
               <a
                 key={s.label}
                 href={s.href}

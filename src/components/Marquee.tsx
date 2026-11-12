@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Tall from "@/components/Tall";
 
 /**
  * A ticker band of real names (artists, release titles).
@@ -49,7 +50,7 @@ export default function Marquee({
           aria-hidden={i >= items.length || undefined}
         >
           <span className={`${text} whitespace-nowrap px-5 text-[3.2rem] sm:px-8 sm:text-[4.6rem] lg:text-[5.6rem]`}>
-            {item}
+            <Tall>{item}</Tall>
           </span>
           <span className={`${sep} text-[1.6rem] sm:text-[2.2rem]`} aria-hidden="true">
             ✺

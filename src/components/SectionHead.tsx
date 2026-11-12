@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import Reveal from "@/components/Reveal";
+import Tall from "@/components/Tall";
 
 /** Numbered section heading: "01 — Latest releases", then big type. */
 export default function SectionHead({
@@ -25,7 +26,7 @@ export default function SectionHead({
           <span>{eyebrow}</span>
         </p>
         <h2 id={id} className="display mt-4 text-[3.8rem] sm:text-[5.5rem] lg:text-[7rem]">
-          {title}
+          <Tall>{title}</Tall>
         </h2>
       </div>
       {link && (

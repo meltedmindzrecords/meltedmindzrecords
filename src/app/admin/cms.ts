@@ -1,4 +1,5 @@
-export type FieldType = "text" | "textarea" | "url" | "image" | "date" | "bool" | "number" | "select" | "artist";
+export type FieldType =
+  | "text" | "textarea" | "url" | "image" | "video" | "date" | "datetime" | "bool" | "number" | "select" | "artist";
 
 export type Field = {
   key: string;
@@ -8,10 +9,19 @@ export type Field = {
   help?: string;
   options?: string[];
   full?: boolean;
+  placeholder?: string;
 };
 
 export type CmsConfig = {
-  table: "artists" | "releases" | "news" | "team";
+  table: "artists" | "releases" | "news" | "team" | "listings";
+  /** Admin URL segment (defaults to the table name). */
+  path?: string;
+  /** Rows this page manages (e.g. listings of one kind); also set on new rows. */
+  filter?: Record<string, string>;
+  /** Where the item shows on the public site. */
+  viewUrl?: (row: Row) => string;
+  /** Note under the list about how order is used. */
+  orderNote?: string;
   singular: string;
   plural: string;
   intro: string;
@@ -33,14 +43,21 @@ const order: Field = {
   key: "sort_order",
   label: "Order",
   type: "number",
-  help: "Lower numbers show first.",
+  help: "Lower numbers show first. Easier: drag the rows (or use the arrows) in the list.",
+};
+const publishAt: Field = {
+  key: "publish_at",
+  label: "Publish on (optional)",
+  type: "datetime",
+  help: "Leave empty to show it now. Pick a date and time to keep it hidden until then; it goes live on its own (within a minute or two).",
 };
 
 export const artistsConfig: CmsConfig = {
   table: "artists",
   singular: "artist",
   plural: "Artists",
-  intro: "The roster on the home page, the Artists page and each artist's own page.",
+  intro: "The roster on the Artists page, the spotlight on the home page and each artist's own page.",
+  viewUrl: (r) => `/artists/${String(r.slug ?? "")}`,
   titleKey: "name",
   subtitle: (r) => String(r.genre ?? ""),
   imageKey: "image_url",
@@ -54,7 +71,12 @@ export const artistsConfig: CmsConfig = {
     { key: "youtube_url", label: "YouTube link", type: "url" },
     { key: "instagram_url", label: "Instagram link", type: "url" },
     { key: "tiktok_url", label: "TikTok link", type: "url" },
-    { key: "slug", label: "Page address", type: "text", help: "meltedmindzrecords.com/artists/… (made from the name if left empty)" },
+    {
+      key: "slug",
+      label: "Page address",
+      type: "text",
+      help: "meltedmindzrecords.com/artists/… (made from the name if left empty). If you change it, the old address keeps working and forwards to the new one.",
+    },
     order,
     visible,
   ],
@@ -64,7 +86,9 @@ export const releasesConfig: CmsConfig = {
   table: "releases",
   singular: "release",
   plural: "Releases",
-  intro: "Music on the home page and the Releases page. The release marked “Homepage hero” is the big one at the top of the home page.",
+  intro: "Music on the Releases page and the home page. The newest one is featured on the home page unless you pick another under Homepage.",
+  viewUrl: () => "/releases",
+  orderNote: "The Releases page lists newest first. To use this order instead, choose “My order” under Homepage.",
   titleKey: "title",
   subtitle: (r) => [r.artist, r.type, r.release_date].filter(Boolean).join(" · "),
   imageKey: "cover_url",
@@ -81,8 +105,8 @@ export const releasesConfig: CmsConfig = {
     { key: "spotify_url", label: "Spotify link", type: "url" },
     { key: "apple_music_url", label: "Apple Music link", type: "url" },
     { key: "youtube_url", label: "YouTube link", type: "url" },
-    { key: "featured", label: "Homepage hero", type: "bool", help: "Shows this release big at the top of the home page. Only one at a time." },
     { key: "slug", label: "Short name", type: "text", help: "Made from the title if left empty." },
+    publishAt,
     order,
     visible,
   ],
@@ -93,6 +117,7 @@ export const newsConfig: CmsConfig = {
   singular: "news post",
   plural: "News",
   intro: "Press releases and announcements on the News page. The first one shows largest.",
+  viewUrl: () => "/news",
   titleKey: "title",
   subtitle: (r) => [r.category, r.published_on].filter(Boolean).join(" · "),
   imageKey: "image_url",
@@ -104,6 +129,7 @@ export const newsConfig: CmsConfig = {
     { key: "link_url", label: "Link to the full story", type: "url", full: true, help: "For example your Substack post." },
     { key: "image_url", label: "Image (optional)", type: "image", full: true },
     { key: "slug", label: "Short name", type: "text", help: "Made from the headline if left empty." },
+    publishAt,
     order,
     visible,
   ],
@@ -114,6 +140,7 @@ export const teamConfig: CmsConfig = {
   singular: "team member",
   plural: "Team",
   intro: "The people on the About page.",
+  viewUrl: () => "/about",
   titleKey: "name",
   subtitle: (r) => String(r.title ?? ""),
   imageKey: "image_url",
@@ -127,7 +154,44 @@ export const teamConfig: CmsConfig = {
   ],
 };
 
-export const allConfigs = [artistsConfig, releasesConfig, newsConfig, teamConfig];
+const listingFields = (what: string): Field[] => [
+  { key: "title", label: "Title", type: "text", required: true, full: true },
+  { key: "details", label: "Details line (optional)", type: "text", full: true, help: "For example: Remote · Part-time · Paid" },
+  { key: "description", label: "Description", type: "textarea", full: true },
+  { key: "apply_url", label: "Apply link (optional)", type: "url", full: true, help: `Adds an Apply button to the ${what}.` },
+  order,
+  visible,
+];
+
+export const careersConfig: CmsConfig = {
+  table: "listings",
+  path: "careers",
+  filter: { kind: "career" },
+  singular: "opening",
+  plural: "Careers",
+  intro: "Open jobs on the Careers page. While there are none, the page shows “No Current Open Positions” (its text is under Settings → Careers).",
+  titleKey: "title",
+  subtitle: (r) => String(r.details ?? ""),
+  viewUrl: () => "/careers",
+  fields: listingFields("opening"),
+};
+
+export const internshipsConfig: CmsConfig = {
+  table: "listings",
+  path: "internships",
+  filter: { kind: "internship" },
+  singular: "program",
+  plural: "Internships",
+  intro: "The programs on the Internships page.",
+  titleKey: "title",
+  subtitle: (r) => String(r.details ?? ""),
+  viewUrl: () => "/internships",
+  fields: listingFields("program"),
+};
+
+export const allConfigs = [artistsConfig, releasesConfig, newsConfig, teamConfig, careersConfig, internshipsConfig];
+
+export const adminPath = (c: CmsConfig) => `/admin/${c.path ?? c.table}`;
 
 export function slugify(s: string): string {
   return s
