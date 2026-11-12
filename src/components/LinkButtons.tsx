@@ -21,7 +21,7 @@ export function StreamButtons({ links }: { links: NamedLink[] }) {
           rel="noopener noreferrer"
           className={
             i === 0
-              ? "caps inline-flex items-center gap-2.5 bg-white px-6 py-3.5 text-[13px] text-black transition hover:bg-zinc-200"
+              ? "caps inline-flex items-center gap-2.5 bg-molten px-6 py-3.5 text-[13px] text-black transition hover:-translate-y-0.5 hover:bg-white"
               : "caps inline-flex items-center gap-2.5 border border-white/50 px-6 py-3.5 text-[13px] text-white transition hover:border-white hover:bg-white hover:text-black"
           }
         >

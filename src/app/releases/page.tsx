@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import ReleaseCard from "@/components/ReleaseCard";
+import Reveal from "@/components/Reveal";
+import VinylCover from "@/components/VinylCover";
 import { StreamButtons } from "@/components/LinkButtons";
 import {
   artistFor,
@@ -29,31 +31,26 @@ export default async function ReleasesPage() {
   return (
     <>
       <section className="mx-auto max-w-[1600px] px-5 pt-28 text-center sm:px-10 sm:pt-36">
-        <h1 className="display text-[24vw] sm:text-[11rem]">Releases</h1>
+        <p className="rise caps text-[12px] text-molten sm:text-[13px]">The catalog</p>
+        <h1 className="display mt-3 overflow-hidden pb-[0.04em] text-[24vw] sm:text-[11rem]">
+          <span className="rise block" style={{ ["--d" as string]: "100ms" }}>Releases</span>
+        </h1>
       </section>
 
       {release && (
-        <section className="mx-auto max-w-[1600px] px-5 py-14 sm:px-10 lg:py-20">
+        <section className="mx-auto max-w-[1600px] overflow-x-clip px-5 py-14 sm:px-10 lg:py-20">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-end lg:gap-16">
-            <div className="relative aspect-square w-full overflow-hidden bg-zinc-900">
-              <Image
-                src={release.cover}
-                alt={`${release.title} cover art`}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-                unoptimized={!isOptimizable(release.cover)}
-              />
-            </div>
-            <div>
-              <p className="caps text-[12px] text-white/50">
+            <Reveal className="group">
+              <VinylCover release={release} priority sizes="(max-width: 1024px) 78vw, 45vw" />
+            </Reveal>
+            <Reveal delay={120}>
+              <p className="caps text-[12px] text-white/70">
                 {[release.featured ? "Featured" : "Latest", release.type, release.releaseDate]
                   .filter(Boolean)
                   .join(" · ")}
               </p>
               <h2 className="display mt-3 text-[4.5rem] sm:text-[7rem]">{release.title}</h2>
-              <p className="caps mt-3 text-[16px] text-white/85">
+              <p className="caps mt-3 text-[16px] text-molten">
                 {artist ? (
                   <Link href={`/artists/${artist.slug}`} className="hover:underline">
                     {release.artist}
@@ -75,12 +72,12 @@ export default async function ReleasesPage() {
                   ]}
                 />
               </div>
-            </div>
+            </Reveal>
           </div>
 
           {release.about && release.about !== release.description && (
             <div className="mx-auto mt-20 max-w-3xl border-t border-white/15 pt-12 text-center">
-              <p className="caps text-[13px] text-white/60">About the release</p>
+              <p className="caps text-[13px] text-molten">About the release</p>
               <p className="mt-6 text-xl leading-relaxed text-white/80">{release.about}</p>
             </div>
           )}
