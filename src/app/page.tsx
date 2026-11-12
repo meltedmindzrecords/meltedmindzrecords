@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import HeroVideo from "@/components/HeroVideo";
 import Marquee from "@/components/Marquee";
-import ReleaseCard from "@/components/ReleaseCard";
 import Reveal from "@/components/Reveal";
 import SectionHead from "@/components/SectionHead";
 import VinylCover from "@/components/VinylCover";
@@ -34,9 +33,8 @@ export default async function Home() {
   const featuredListen = featured ? listenLink(featured) : null;
   const roster = [...artists].sort((a, b) => a.name.localeCompare(b.name));
 
-  // Latest first: the featured release leads, the rest follow in CMS order.
-  const latest = featured ? [featured, ...releases.filter((r) => r !== featured)] : releases;
-  const [lead, ...rest] = latest;
+  // Home shows ONE release: the featured one (newest first). The full catalog lives on /releases.
+  const lead = featured;
   const leadArtist = lead ? artistFor(lead, artists) : null;
 
   // Spotlight: the artist behind the featured release, else the first artist in the CMS order.
@@ -136,10 +134,10 @@ export default async function Home() {
           <div className="mx-auto max-w-[1600px] px-5 py-24 sm:px-10 lg:py-36">
             <SectionHead
               index={idx()}
-              eyebrow={releases.length === 1 ? "Latest release" : "Latest releases"}
-              title={releases.length === 1 ? "New music" : "Latest releases"}
+              eyebrow="Latest release"
+              title="New music"
               id="latest-title"
-              link={releases.length > 1 ? { href: "/releases", label: "All releases" } : undefined}
+              link={{ href: "/releases", label: "All releases" }}
             />
 
             <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-20">
@@ -174,27 +172,16 @@ export default async function Home() {
                     ]}
                   />
                 </div>
-                {releases.length === 1 && (
-                  <Link
-                    href="/releases"
-                    className="caps group mt-9 inline-flex items-center gap-2 text-[13px] text-white/75 hover:text-white"
-                  >
-                    <span className="wipe pb-1">About the release</span>
-                    <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
-                  </Link>
-                )}
+                <Link
+                  href="/releases"
+                  className="caps group mt-9 inline-flex items-center gap-2 text-[13px] text-white/75 hover:text-white"
+                >
+                  <span className="wipe pb-1">See all releases</span>
+                  <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+                </Link>
               </Reveal>
             </div>
 
-            {rest.length > 0 && (
-              <Reveal className="no-scrollbar -mx-5 mt-20 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-6 sm:overflow-visible sm:px-0 lg:grid-cols-4">
-                {rest.slice(0, 8).map((r) => (
-                  <div key={r.slug} className="w-[72vw] shrink-0 snap-start sm:w-auto">
-                    <ReleaseCard release={r} />
-                  </div>
-                ))}
-              </Reveal>
-            )}
           </div>
         </section>
       )}

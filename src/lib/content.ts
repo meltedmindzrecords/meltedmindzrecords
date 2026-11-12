@@ -259,7 +259,12 @@ export async function getTeam(): Promise<TeamMember[]> {
 export async function getReleases(): Promise<Release[]> {
   const rows = await fetchRows("releases");
   if (!rows) return fallbackReleases;
-  const releases = rows
+  // Newest first by release date (undated ones go last, keeping CMS order).
+  const dated = rows
+    .map((r, i) => ({ r, i, t: Date.parse(str(r.release_date)) || 0 }))
+    .sort((a, b) => b.t - a.t || a.i - b.i)
+    .map((x) => x.r);
+  const releases = dated
     .map((r) => {
       const title = str(r.title);
       const description = str(r.description);

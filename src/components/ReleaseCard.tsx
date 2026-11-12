@@ -40,7 +40,7 @@ export default function ReleaseCard({
       <p className="caps mt-4 text-[11px] text-white/60">
         {[release.type, release.releaseDate].filter(Boolean).join(" · ")}
       </p>
-      <h3 className="display mt-2 text-[2.1rem] transition group-hover:text-molten sm:text-[2.5rem]">{release.title}</h3>
+      <h3 className="display mt-2 break-words text-[1.6rem] leading-[0.95] transition group-hover:text-molten sm:text-[2.5rem]">{release.title}</h3>
       {showArtist && release.artist && (
         <p className="caps mt-1.5 text-[13px] text-white/75">{release.artist}</p>
       )}
